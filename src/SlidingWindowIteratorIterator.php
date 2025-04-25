@@ -47,18 +47,18 @@ class SlidingWindowIteratorIterator extends \IteratorIterator
     /**
      * Initializes the SlidingWindowIteratorIterator.
      *
-     * @param \Traversable $iterator   the iterator containing values
-     * @param int          $windowSize the number of elements per window (must be >= 1)
+     * @param iterable $iterator   the iterator containing values
+     * @param int      $windowSize the number of elements per window (must be >= 1)
      *
      * @throws \InvalidArgumentException if $windowSize is less than 1
      */
-    public function __construct(\Traversable $iterator, int $windowSize)
+    public function __construct(iterable $iterator, int $windowSize)
     {
         if ($windowSize < 1) {
             throw new \InvalidArgumentException('Window size must be at least 1.');
         }
 
-        parent::__construct($iterator);
+        parent::__construct(new IterableIterator($iterator));
         $this->windowSize = $windowSize;
     }
 

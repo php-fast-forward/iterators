@@ -67,14 +67,14 @@ class ConsecutiveGroupIterator extends \IteratorIterator
     /**
      * Initializes the ConsecutiveGroupIterator.
      *
-     * @param \Traversable $iterator the iterator containing values to be chunked
-     * @param \Closure     $callback The function that determines whether elements should be in the same chunk.
-     *                               It receives two arguments: `$previous` and `$current`,
-     *                               and must return `true` to keep them together or `false` to start a new chunk.
+     * @param iterable $iterator the iterator containing values to be chunked
+     * @param \Closure $callback The function that determines whether elements should be in the same chunk.
+     *                           It receives two arguments: `$previous` and `$current`,
+     *                           and must return `true` to keep them together or `false` to start a new chunk.
      */
-    public function __construct(\Traversable $iterator, \Closure $callback)
+    public function __construct(iterable $iterator, \Closure $callback)
     {
-        parent::__construct($iterator);
+        parent::__construct(new IterableIterator($iterator));
         $this->callback = $callback;
     }
 

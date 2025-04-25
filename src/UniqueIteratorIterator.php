@@ -71,12 +71,12 @@ class UniqueIteratorIterator extends \IteratorIterator
     /**
      * Initializes the UniqueIteratorIterator.
      *
-     * @param \Traversable $iterator the iterator to filter for unique values
-     * @param bool         $strict   whether to use strict comparison (default: true)
+     * @param iterable $iterator the iterator to filter for unique values
+     * @param bool     $strict   whether to use strict comparison (default: true)
      */
-    public function __construct(\Traversable $iterator, bool $strict = true)
+    public function __construct(iterable $iterator, bool $strict = true)
     {
-        parent::__construct($iterator);
+        parent::__construct(new IterableIterator($iterator));
         $this->strict = $strict;
     }
 

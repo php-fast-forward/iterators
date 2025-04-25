@@ -88,9 +88,9 @@ class GeneratorRewindableIterator implements \Iterator
      *
      * @param \Closure|\Generator $generator a generator instance or a callable that returns a generator
      */
-    public function __construct(private \Closure|\Generator $generator)
+    public function __construct(\Closure|\Generator $generator)
     {
-        $this->iteratorAggregate = new GeneratorCachingIteratorAggregate($this->generator);
+        $this->iteratorAggregate = new GeneratorCachingIteratorAggregate($generator);
     }
 
     /**

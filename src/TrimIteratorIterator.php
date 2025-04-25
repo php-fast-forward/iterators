@@ -61,14 +61,22 @@ namespace FastForward\Iterator;
 class TrimIteratorIterator extends ClosureIteratorIterator
 {
     /**
+     * @var string the default characters to trim
+     */
+    private const DEFAULT_CHARACTERS = " \n\r\t\v\x00";
+
+    /**
      * Initializes the TrimIteratorIterator.
      *
-     * @param \Traversable $iterator   the iterator containing values to be trimmed
+     * @param iterable     $iterator   the iterator containing values to be trimmed
      * @param null|string  $characters A string defining the characters to be trimmed.
      *                                 Defaults to standard whitespace characters.
      */
-    public function __construct(\Traversable $iterator, ?string $characters = " \n\r\t\v\x00")
+    public function __construct(iterable $iterator, ?string $characters = self::DEFAULT_CHARACTERS)
     {
-        parent::__construct($iterator, static fn ($current) => mb_trim($current, $characters ?? " \n\r\t\v\x00"));
+        parent::__construct(
+            new IterableIterator($iterator),
+            static fn ($current) => mb_trim($current, $characters ?? self::DEFAULT_CHARACTERS)
+        );
     }
 }

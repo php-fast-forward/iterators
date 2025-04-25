@@ -57,7 +57,7 @@ class FileExtensionFilterIterator extends \FilterIterator
     /**
      * Initializes the FileExtensionFilterIterator.
      *
-     * @param \FilesystemIterator|\RecursiveDirectoryIterator $iterator The directory iterator to wrap.
+     * @param \FilesystemIterator|\RecursiveDirectoryIterator $iterator      the directory iterator to wrap
      * @param string                                          ...$extensions The allowed file extensions.
      */
     public function __construct(\FilesystemIterator $iterator, string ...$extensions)

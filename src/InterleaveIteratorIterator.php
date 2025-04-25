@@ -62,18 +62,18 @@ class InterleaveIteratorIterator implements \Iterator
     /**
      * Initializes the InterleaveIteratorIterator.
      *
-     * @param \Traversable ...$iterators The iterators to be interleaved.
+     * @param iterable ...$iterators The iterators to be interleaved.
      *
      * @throws \InvalidArgumentException if no iterators are provided
      */
-    public function __construct(\Traversable ...$iterators)
+    public function __construct(iterable ...$iterators)
     {
         if (0 === \count($iterators)) {
             throw new \InvalidArgumentException('At least one iterator must be provided.');
         }
 
         $this->iterators = array_map(
-            static fn (\Traversable $iterator): \Iterator => $iterator instanceof \Iterator ? $iterator : new \IteratorIterator($iterator),
+            static fn (iterable $iterator): \Iterator => new IterableIterator($iterator),
             $iterators
         );
 

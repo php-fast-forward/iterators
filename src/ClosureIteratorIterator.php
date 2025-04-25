@@ -57,12 +57,12 @@ class ClosureIteratorIterator extends \IteratorIterator
     /**
      * Initializes the ClosureIteratorIterator.
      *
-     * @param \Traversable $iterator the underlying iterator to wrap
-     * @param \Closure     $closure  the transformation function applied to each element
+     * @param iterable $iterator the underlying iterator to wrap
+     * @param \Closure $closure  the transformation function applied to each element
      */
-    public function __construct(\Traversable $iterator, \Closure $closure)
+    public function __construct(iterable $iterator, \Closure $closure)
     {
-        parent::__construct($iterator);
+        parent::__construct(new IterableIterator($iterator));
         $this->closure = $closure;
     }
 

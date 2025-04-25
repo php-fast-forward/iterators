@@ -13,11 +13,11 @@ declare(strict_types=1);
  * @license   https://opensource.org/licenses/MIT MIT License
  */
 
-use FastForward\Iterator\InterleaveIteratorIterator;
+require_once dirname(__DIR__) . '/vendor/autoload.php';
+
+use FastForward\Iterator\ChainIterableIterator;
 
 use function FastForward\Iterator\debugIterable;
-
-require_once dirname(__DIR__) . '/vendor/autoload.php';
 
 /**
  * Sample dataset for testing InterleaveIteratorIterator.
@@ -31,11 +31,11 @@ $data2 = new ArrayIterator([2, 5, 8]);
 $data3 = new ArrayIterator([3, 6, 9]);
 
 /**
- * Creates an InterleaveIteratorIterator interleaving three iterators.
+ * Creates a ChainIterableIterator with iterables to chain.
  *
- * @var InterleaveIteratorIterator<int> $interleaved
+ * @var ChainIterableIterator<int> $chain
  */
-$interleaved = new InterleaveIteratorIterator($data1, $data2, $data3);
+$chain = new ChainIterableIterator($data1, $data2, $data3);
 
 // Debugging the output of InterleaveIteratorIterator.
-debugIterable($interleaved, 'InterleaveIteratorIterator :: Interleaved Iteration');
+debugIterable($chain, 'InterleaveIteratorIterator :: Interleaved Iteration');

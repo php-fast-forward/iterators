@@ -23,7 +23,7 @@
         "source": "https://github.com/php-fast-forward/iterators"
     },
     "require": {
-        "php": "^7.4 || ^8.0"
+        "php": "^8.1"
     },
     "require-dev": {
         "coisa/php-cs-fixer": "^2.1",

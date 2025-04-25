@@ -22,9 +22,9 @@ require_once dirname(__DIR__) . '/vendor/autoload.php';
 /**
  * Sample dataset for testing ConsecutiveGroupIterator.
  *
- * @var ArrayIterator<int, int> $dataSet
+ * @var array|ArrayIterator<int, int> $dataSet
  */
-$dataSet = new ArrayIterator([1, 1, 2, 2, 2, 3, 4, 4, 5]);
+$dataSet = [1, 1, 2, 2, 2, 3, 4, 4, 5];
 
 /**
  * Creates a ConsecutiveGroupIterator to group consecutive equal elements.

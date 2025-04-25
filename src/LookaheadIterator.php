@@ -65,11 +65,11 @@ class LookaheadIterator extends \IteratorIterator
     /**
      * Initializes the LookaheadIterator.
      *
-     * @param \Traversable $iterator the iterator to wrap
+     * @param iterable $iterator the iterator to wrap
      */
-    public function __construct(\Traversable $iterator)
+    public function __construct(iterable $iterator)
     {
-        parent::__construct($iterator);
+        parent::__construct(new IterableIterator($iterator));
         $this->peekableInnerIterator = new \IteratorIterator(parent::getInnerIterator());
     }
 

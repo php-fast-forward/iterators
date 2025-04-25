@@ -19,6 +19,11 @@ use function FastForward\Iterator\debugIterable;
 
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
+/**
+ * Sample dataset for testing ClosureIteratorIterator..
+ *
+ * @var array<int, int> $dataSet
+ */
 $data = [1, 2, 3, 4, 5];
 
 /**
@@ -29,7 +34,7 @@ $data = [1, 2, 3, 4, 5];
  * @return ClosureIteratorIterator<int, int> the transformed iterator
  */
 $doubleIterator = new ClosureIteratorIterator(
-    new ArrayIterator($data),
+    $data,
     static fn (int $value): int => $value * 2
 );
 

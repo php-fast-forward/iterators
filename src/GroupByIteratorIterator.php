@@ -71,12 +71,12 @@ class GroupByIteratorIterator extends \IteratorIterator
     /**
      * Initializes the GroupByIteratorIterator.
      *
-     * @param \Traversable $iterator the iterator containing values to be grouped
-     * @param \Closure     $groupBy  a function that determines the group key for each element
+     * @param iterable $iterator the iterator containing values to be grouped
+     * @param \Closure $groupBy  a function that determines the group key for each element
      */
-    public function __construct(\Traversable $iterator, \Closure $groupBy)
+    public function __construct(iterable $iterator, \Closure $groupBy)
     {
-        parent::__construct($iterator);
+        parent::__construct(new IterableIterator($iterator));
         $this->groupBy = $groupBy;
     }
 

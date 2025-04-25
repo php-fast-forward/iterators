@@ -66,18 +66,18 @@ class ZipIteratorIterator implements \Iterator
     /**
      * Initializes the ZipIteratorIterator.
      *
-     * @param \Traversable ...$iterators The iterators to be combined.
+     * @param iterable ...$iterators The iterators to be combined.
      *
      * @throws \InvalidArgumentException if fewer than two iterators are provided
      */
-    public function __construct(\Traversable ...$iterators)
+    public function __construct(iterable ...$iterators)
     {
         if (\count($iterators) < 2) {
             throw new \InvalidArgumentException('At least two iterators are required.');
         }
 
         $this->iterators = array_map(
-            static fn (\Traversable $iterator): \Iterator => $iterator instanceof \Iterator ? $iterator : new \IteratorIterator($iterator),
+            static fn (\Traversable $iterator): \Iterator => new IterableIterator($iterator),
             $iterators
         );
 

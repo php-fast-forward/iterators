@@ -59,17 +59,17 @@ class RepeatableIteratorIterator extends \LimitIterator implements \Countable
     /**
      * Initializes the RepeatableIteratorIterator.
      *
-     * @param \Iterator $iterator the iterator to be wrapped in an infinite loop
-     * @param int       $limit    the maximum number of elements to iterate over per cycle
-     * @param int       $offset   the starting offset within the iterator
+     * @param iterable $iterator the iterator to be wrapped in an infinite loop
+     * @param int      $limit    the maximum number of elements to iterate over per cycle
+     * @param int      $offset   the starting offset within the iterator
      */
     public function __construct(
-        \Iterator $iterator,
+        iterable $iterator,
         int $limit,
         int $offset = 0
     ) {
         $this->limit = $limit;
-        parent::__construct(new \InfiniteIterator($iterator), $offset, $limit);
+        parent::__construct(new \InfiniteIterator(new IterableIterator($iterator)), $offset, $limit);
     }
 
     /**

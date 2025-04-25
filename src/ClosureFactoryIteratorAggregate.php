@@ -109,6 +109,6 @@ class ClosureFactoryIteratorAggregate implements \IteratorAggregate
      */
     public function getIterator(): \Traversable
     {
-        return \call_user_func($this->factory);
+        return new IterableIterator(\call_user_func($this->factory));
     }
 }
