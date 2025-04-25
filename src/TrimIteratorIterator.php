@@ -68,9 +68,9 @@ class TrimIteratorIterator extends ClosureIteratorIterator
     /**
      * Initializes the TrimIteratorIterator.
      *
-     * @param iterable     $iterator   the iterator containing values to be trimmed
-     * @param null|string  $characters A string defining the characters to be trimmed.
-     *                                 Defaults to standard whitespace characters.
+     * @param iterable    $iterator   the iterator containing values to be trimmed
+     * @param null|string $characters A string defining the characters to be trimmed.
+     *                                Defaults to standard whitespace characters.
      */
     public function __construct(iterable $iterator, ?string $characters = self::DEFAULT_CHARACTERS)
     {
