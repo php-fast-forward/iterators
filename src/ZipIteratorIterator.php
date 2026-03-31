@@ -22,8 +22,6 @@ use Iterator;
 use InvalidArgumentException;
 
 /**
- * Class ZipIteratorIterator.
- *
  * Combines multiple iterators into a single iterator, returning arrays of grouped values.
  *
  * This iterator synchronously iterates over multiple traversable sources,

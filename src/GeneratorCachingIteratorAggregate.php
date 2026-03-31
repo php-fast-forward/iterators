@@ -23,8 +23,6 @@ use Generator;
 use Traversable;
 
 /**
- * Class GeneratorCachingIteratorAggregate.
- *
  * A caching iterator aggregate designed to wrap a generator and cache its results.
  *
  * This class allows wrapping a `Generator` or a `callable` returning a generator,

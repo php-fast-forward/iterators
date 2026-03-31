@@ -21,8 +21,6 @@ namespace FastForward\Iterator;
 use Closure;
 
 /**
- * Class GroupByIteratorIterator.
- *
  * Groups elements from an iterator based on a callback function.
  *
  * This iterator aggregates elements into associative arrays where the keys are

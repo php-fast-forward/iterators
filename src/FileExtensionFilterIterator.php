@@ -26,8 +26,6 @@ use RecursiveDirectoryIterator;
 use SplFileInfo;
 
 /**
- * Class FileExtensionFilterIterator.
- *
  * A filter iterator that only accepts files matching specified extensions.
  *
  * This iterator is designed to traverse a directory and filter files

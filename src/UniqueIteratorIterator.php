@@ -19,8 +19,6 @@ declare(strict_types=1);
 namespace FastForward\Iterator;
 
 /**
- * Class UniqueIteratorIterator.
- *
  * Filters duplicate values from an iterator, ensuring uniqueness.
  *
  * This iterator allows traversing an iterable while maintaining a record of seen values,

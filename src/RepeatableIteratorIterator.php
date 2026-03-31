@@ -23,8 +23,6 @@ use Countable;
 use InfiniteIterator;
 
 /**
- * Class RepeatableIteratorIterator.
- *
  * An iterator that enables repeated iteration over a finite subset of an infinite iterator.
  *
  * This iterator wraps an `Iterator` and applies a `LimitIterator` over an `InfiniteIterator`,

@@ -24,8 +24,6 @@ use Closure;
 use Generator;
 
 /**
- * Class GeneratorRewindableIterator.
- *
  * An iterator that allows rewinding over a generator by caching its values.
  *
  * This class wraps a generator or a closure returning a generator, enabling

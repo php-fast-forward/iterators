@@ -22,8 +22,6 @@ use Traversable;
 use ArrayIterator;
 
 /**
- * Class IterableIterator.
- *
  * A normalized iterator wrapper that ensures any iterable (array or Traversable)
  * is treated as a standard \Iterator.
  *

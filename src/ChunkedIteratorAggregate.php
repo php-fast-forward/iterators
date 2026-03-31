@@ -21,8 +21,6 @@ namespace FastForward\Iterator;
 use Traversable;
 
 /**
- * Class ChunkedIteratorAggregate.
- *
  * Splits an iterable into fixed-size chunks.
  *
  * This iterator wraps a `Traversable` and groups elements into subarrays

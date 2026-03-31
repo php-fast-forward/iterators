@@ -22,8 +22,6 @@ use Iterator;
 use InvalidArgumentException;
 
 /**
- * Class InterleaveIteratorIterator.
- *
  * Interleaves elements from multiple iterators in a round-robin fashion.
  *
  * This iterator alternates between multiple traversable sources,

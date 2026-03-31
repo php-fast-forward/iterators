@@ -17,8 +17,6 @@ declare(strict_types=1);
  */
 
 /**
- * Class RangeIterator.
- *
  * An iterator that behaves like PHP's `range()` function.
  * It supports both ascending and descending sequences and allows iteration
  * over floating-point or integer ranges.

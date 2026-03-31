@@ -22,8 +22,6 @@ use Closure;
 use Traversable;
 
 /**
- * Class ClosureFactoryIteratorAggregate.
- *
  * Provides an iterator implementation based on a closure factory.
  *
  * This class allows dynamic generation of iterators using a provided closure.

@@ -21,8 +21,6 @@ namespace FastForward\Iterator;
 use Closure;
 
 /**
- * Class ClosureIteratorIterator.
- *
  * An extended IteratorIterator that applies a closure transformation
  * to each element during iteration.
  *

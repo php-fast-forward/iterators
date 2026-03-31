@@ -21,8 +21,6 @@ namespace FastForward\Iterator;
 use InvalidArgumentException;
 
 /**
- * Class SlidingWindowIteratorIterator.
- *
  * Provides a sliding window over an iterator with sequential keys.
  *
  * This iterator returns overlapping windows of elements with keys

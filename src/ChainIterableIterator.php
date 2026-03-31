@@ -22,8 +22,6 @@ use Countable;
 use Iterator;
 
 /**
- * Class ChainIterableIterator.
- *
  * An iterator that chains multiple iterable sources together into a single unified iterator.
  *
  * This iterator SHALL accept any number of iterable values (arrays, Traversables, or Iterators)

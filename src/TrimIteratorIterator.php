@@ -19,8 +19,6 @@ declare(strict_types=1);
 namespace FastForward\Iterator;
 
 /**
- * Class TrimIteratorIterator.
- *
  * An iterator that trims each value within a `Traversable`.
  *
  * This class extends `ClosureIteratorIterator` and applies `trim()`

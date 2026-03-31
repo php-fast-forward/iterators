@@ -23,8 +23,6 @@ use LimitIterator;
 use OutOfBoundsException;
 
 /**
- * Class LookaheadIterator.
- *
  * An iterator that allows peeking at the next value(s) and stepping back to the previous value(s)
  * without advancing the iteration.
  *

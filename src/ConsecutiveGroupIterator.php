@@ -21,8 +21,6 @@ namespace FastForward\Iterator;
 use Closure;
 
 /**
- * Class ConsecutiveGroupIterator.
- *
  * Groups elements dynamically based on a user-defined condition.
  *
  * This iterator chunks elements from a traversable source, creating groups where
