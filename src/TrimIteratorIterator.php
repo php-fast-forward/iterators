@@ -19,7 +19,7 @@ declare(strict_types=1);
 namespace FastForward\Iterator;
 
 /**
- * An iterator that trims each value within a `Traversable`.
+ * An iterator that trims each value within a `iterable`.
  *
  * This class extends `ClosureIteratorIterator` and applies `trim()`
  * to each element, removing leading and trailing characters based on
