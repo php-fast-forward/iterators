@@ -22,12 +22,29 @@ use Countable;
 use IteratorAggregate;
 use Traversable;
 
+/**
+ * Provides a base implementation for iterator aggregate objects that are also countable.
+ *
+ * This abstract class SHALL serve as a reusable foundation for concrete iterator aggregate
+ * implementations that expose a traversable iterator and require count-related behavior.
+ * Implementations MUST provide a valid iterator through {@see getIterator()}, and that
+ * iterator SHOULD be suitable for reuse by the count-related logic provided through the
+ * composed trait.
+ */
 abstract class CountableIteratorAggregate implements IteratorAggregate, Countable
 {
     use CountableIteratorIteratorTrait;
 
     /**
-     * @return Traversable
+     * Returns the inner traversable iterator used by the aggregate.
+     *
+     * This method SHALL proxy the iterator returned by {@see getIterator()} without altering
+     * its semantics or traversal behavior. Consumers of this method MUST receive the same
+     * traversable instance or equivalent traversable representation exposed by the aggregate.
+     * This method SHOULD remain private because it exists only to support the internal
+     * collaboration between this class and its trait-based behavior.
+     *
+     * @return Traversable the traversable iterator exposed by the aggregate implementation
      */
     private function getInnerIterator(): Traversable
     {

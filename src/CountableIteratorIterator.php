@@ -21,6 +21,14 @@ namespace FastForward\Iterator;
 use Countable;
 use IteratorIterator;
 
+/**
+ * Provides an iterator wrapper that is also countable.
+ *
+ * This class SHALL extend {@see IteratorIterator} to decorate an existing iterator while
+ * exposing counting behavior through the composed trait. The wrapped iterator MUST be
+ * compatible with the expectations of {@see IteratorIterator}, and consumers SHOULD rely
+ * on this class when they need both traversal and count semantics from a single object.
+ */
 class CountableIteratorIterator extends IteratorIterator implements Countable
 {
     use CountableIteratorIteratorTrait;

@@ -21,15 +21,27 @@ namespace FastForward\Iterator;
 use Countable;
 use Iterator;
 
+/**
+ * Provides a base iterator implementation that is also countable.
+ *
+ * This abstract class SHALL be used as a foundation for iterators that need
+ * to expose counting behavior while remaining compatible with the standard
+ * {@see Iterator} contract. Implementations MUST preserve iterator semantics,
+ * and consumers SHOULD expect the counting logic to operate over the same
+ * sequence that is exposed during normal iteration.
+ */
 abstract class CountableIterator implements Iterator, Countable
 {
     /**
-     * Counts the number of elements in the iterable.
+     * Counts the number of elements available in the iterator.
      *
-     * If the inner iterator implements Countable, it uses that. Otherwise, it
-     * counts the elements by iterating through them.
+     * This method MUST count the elements by iterating over a clone of the
+     * current iterator instance so that the active iterator state of the
+     * original object is not modified during the counting process. Concrete
+     * implementations SHOULD therefore remain safely cloneable whenever this
+     * behavior is expected to be used.
      *
-     * @return int the number of elements in the iterable
+     * @return int the total number of elements exposed by the iterator
      */
     public function count(): int
     {

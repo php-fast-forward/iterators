@@ -21,6 +21,16 @@ namespace FastForward\Iterator;
 use Countable;
 use FilterIterator;
 
+/**
+ * Provides a filter iterator implementation that is also countable.
+ *
+ * This abstract class SHALL extend {@see FilterIterator} so that concrete
+ * implementations MAY filter elements from an inner iterator while also
+ * exposing count semantics. The counting behavior MUST be provided through
+ * the composed trait and SHALL operate according to the characteristics of
+ * the wrapped inner iterator. Implementations SHOULD ensure that their
+ * filtering logic remains consistent with the sequence being counted.
+ */
 abstract class CountableFilterIterator extends FilterIterator implements Countable
 {
     use CountableIteratorIteratorTrait;
