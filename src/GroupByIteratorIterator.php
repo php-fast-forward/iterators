@@ -62,7 +62,7 @@ use Closure;
 class GroupByIteratorIterator extends CountableIteratorIterator
 {
     /**
-     * @var array<mixed, array<int, mixed>> holds grouped elements
+     * @var array<string|int, array<int, mixed>> holds grouped elements
      */
     private array $groups = [];
 
