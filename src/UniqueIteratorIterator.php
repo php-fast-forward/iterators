@@ -8,9 +8,12 @@ declare(strict_types=1);
  * This source file is subject to the license that is bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/iterators
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/iterators
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 namespace FastForward\Iterator;
@@ -52,11 +55,9 @@ namespace FastForward\Iterator;
  *
  * **Note:** This iterator preserves the order of first occurrences.
  *
- * @package FastForward\Iterator
- *
  * @since 1.0.0
  */
-class UniqueIteratorIterator extends \IteratorIterator
+class UniqueIteratorIterator extends CountableIteratorIterator
 {
     /**
      * @var array<int|string, mixed> stores seen values to ensure uniqueness
@@ -64,62 +65,84 @@ class UniqueIteratorIterator extends \IteratorIterator
     private array $seen = [];
 
     /**
-     * @var bool whether to use strict comparison when checking for uniqueness
+     * @var int the current position for the unique elements
      */
-    private bool $strict;
+    private int $position = 0;
 
     /**
      * Initializes the UniqueIteratorIterator.
      *
      * @param iterable $iterator the iterator to filter for unique values
-     * @param bool     $strict   whether to use strict comparison (default: true)
+     * @param bool $strict whether to use strict comparison (default: true)
+     * @param bool $caseSensitive whether to use case-sensitive comparison (default: true)
      */
-    public function __construct(iterable $iterator, bool $strict = true)
-    {
+    public function __construct(
+        iterable $iterator,
+        private readonly bool $strict = true,
+        private readonly bool $caseSensitive = true,
+    ) {
         parent::__construct(new IterableIterator($iterator));
-        $this->strict = $strict;
     }
 
     /**
-     * Retrieves the current unique element.
+     * Retrieves the normalized sequential key for the current unique element.
      *
-     * @return mixed the current unique value
+     * @return int the zero-based position of the current unique value
      */
-    public function current(): mixed
+    public function key(): int
     {
-        return parent::current();
+        return $this->position;
     }
 
     /**
-     * Determines whether the current position is valid.
+     * Advances to the next unique element.
      *
-     * This method skips values that have already been encountered.
-     *
-     * @return bool true if a unique value is available, false otherwise
+     * @return void
      */
-    public function valid(): bool
+    public function next(): void
     {
-        while (parent::valid()) {
-            $value = parent::current();
+        parent::next();
+        $this->skipDuplicates();
 
-            if (!\in_array($value, $this->seen, $this->strict)) {
-                $this->seen[] = $value;
-
-                return true;
-            }
-
-            parent::next();
+        if (parent::valid()) {
+            ++$this->position;
         }
-
-        return false;
     }
 
     /**
      * Resets the iterator and clears the seen values.
+     *
+     * @return void
      */
     public function rewind(): void
     {
         parent::rewind();
         $this->seen = [];
+        $this->position = 0;
+        $this->skipDuplicates();
+    }
+
+    /**
+     * Skips values that have already been encountered and stores the current unique value.
+     *
+     * @return void
+     */
+    private function skipDuplicates(): void
+    {
+        while (parent::valid()) {
+            $value = parent::current();
+
+            if (! $this->caseSensitive && \is_string($value)) {
+                $value = mb_strtolower($value);
+            }
+
+            if (! \in_array($value, $this->seen, $this->strict)) {
+                $this->seen[] = $value;
+
+                return;
+            }
+
+            parent::next();
+        }
     }
 }

@@ -8,9 +8,12 @@ declare(strict_types=1);
  * This source file is subject to the license that is bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/iterators
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/iterators
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 use FastForward\Iterator\GeneratorRewindableIterator;
@@ -23,7 +26,7 @@ require_once dirname(__DIR__) . '/vendor/autoload.php';
 /**
  * The number of elements to generate.
  *
- * @var int $len
+ * @var int
  */
 $len = 5;
 
@@ -45,16 +48,16 @@ $generatorFactory = static function (int $len = 10): Generator {
  *
  * This approach allows for lazy execution of the generator.
  *
- * @var GeneratorRewindableIterator<int> $generatorRewindable
+ * @var GeneratorRewindableIterator<int>
  */
-$generatorRewindable = new GeneratorRewindableIterator(static fn () => $generatorFactory($len));
+$generatorRewindable = new GeneratorRewindableIterator(static fn(): Generator => $generatorFactory($len));
 
 /**
  * GeneratorRewindableIterator created with a directly instantiated generator.
  *
  * This forces the generator to be evaluated immediately.
  *
- * @var GeneratorRewindableIterator<int> $generatorFactoryRewindable
+ * @var GeneratorRewindableIterator<int>
  */
 $generatorFactoryRewindable = new GeneratorRewindableIterator($generatorFactory($len));
 
@@ -63,7 +66,7 @@ $generatorFactoryRewindable = new GeneratorRewindableIterator($generatorFactory(
  *
  * This allows repeated iteration over the same set of generated values.
  *
- * @var RepeatableIteratorIterator<int> $repeatable
+ * @var RepeatableIteratorIterator<int>
  */
 $repeatable = new RepeatableIteratorIterator($generatorRewindable, $len * 3);
 

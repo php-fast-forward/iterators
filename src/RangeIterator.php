@@ -8,12 +8,13 @@ declare(strict_types=1);
  * This source file is subject to the license that is bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/iterators
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/iterators
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
-
-namespace FastForward\Iterator;
 
 /**
  * Class RangeIterator.
@@ -56,16 +57,42 @@ namespace FastForward\Iterator;
  * // 2.0
  * // 2.5
  * ```
+ * @example Iterating Over a Floating-Point Range Including the Boundary
+ * ```php
+ * use FastForward\Iterator\RangeIterator;
+ *
+ * $iterator = new RangeIterator(0, 5, 1.5, true);
+ *
+ * foreach ($iterator as $value) {
+ *     echo $value . "\n";
+ * }
+ * // Output:
+ * // 0
+ * // 1.5
+ * // 3.0
+ * // 4.5
+ * // 5.0
+ * ```
  *
  * **Note:** If the `step` is larger than the absolute difference between `start` and `end`,
  * an `InvalidArgumentException` is thrown.
  *
- * @package FastForward\Iterator
- *
  * @since 1.0.0
  */
-class RangeIterator implements \Iterator, \Countable
+
+namespace FastForward\Iterator;
+
+use Iterator;
+use Countable;
+use InvalidArgumentException;
+
+class RangeIterator implements Iterator, Countable
 {
+    /**
+     * @var float floating-point comparison tolerance
+     */
+    private const float EPSILON = 1.0E-12;
+
     /**
      * @var int the current key (index) in the iteration
      */
@@ -79,30 +106,37 @@ class RangeIterator implements \Iterator, \Countable
     /**
      * @var float|int the step size for each iteration
      */
-    private float|int $step;
+    private readonly float|int $step;
+
+    /**
+     * @var bool indicates whether the iterator should force the boundary value when the next step would overshoot the range
+     */
+    private bool $boundaryYielded = false;
 
     /**
      * Initializes the RangeIterator.
      *
      * @param float|int $start the starting value of the range
-     * @param float|int $end   the ending value of the range
-     * @param float|int $step  the step size between values (must be positive)
+     * @param float|int $end the ending value of the range
+     * @param float|int $step the step size between values (must be positive)
+     * @param bool $includeBoundary whether the iterator should force the end value when the next step would overshoot it
      *
-     * @throws \InvalidArgumentException if step is non-positive or greater than the range size
+     * @throws InvalidArgumentException if step is non-positive or greater than the range size
      */
     public function __construct(
-        private float|int $start,
-        private float|int $end,
-        float|int $step = 1
+        private readonly float|int $start,
+        private readonly float|int $end,
+        float|int $step = 1,
+        private readonly bool $includeBoundary = false
     ) {
         if ($step <= 0) {
-            throw new \InvalidArgumentException('Step must be a positive integer or float.');
+            throw new InvalidArgumentException('Step must be a positive integer or float.');
         }
 
         $rangeSize = abs($this->end - $this->start);
 
-        if ($step > $rangeSize) {
-            throw new \InvalidArgumentException(
+        if ($rangeSize > 0 && $step > $rangeSize) {
+            throw new InvalidArgumentException(
                 'Step cannot be greater than the absolute difference between start and end.'
             );
         }
@@ -133,20 +167,40 @@ class RangeIterator implements \Iterator, \Countable
 
     /**
      * Moves to the next value in the range.
+     *
+     * @return void
      */
     public function next(): void
     {
-        $this->current += $this->step;
+        $projected = $this->current + $this->step;
+
+        if (
+            $this->includeBoundary
+            && ! $this->boundaryYielded
+            && ! $this->isAtBoundary($this->current)
+            && $this->wouldOvershoot($projected)
+        ) {
+            $this->current = $this->end;
+            $this->boundaryYielded = true;
+            ++$this->key;
+
+            return;
+        }
+
+        $this->current = $projected;
         ++$this->key;
     }
 
     /**
      * Resets the iterator to the start of the range.
+     *
+     * @return void
      */
     public function rewind(): void
     {
+        $this->boundaryYielded = false;
         $this->current = $this->start;
-        $this->key     = 0;
+        $this->key = 0;
     }
 
     /**
@@ -156,7 +210,9 @@ class RangeIterator implements \Iterator, \Countable
      */
     public function valid(): bool
     {
-        return ($this->step > 0) ? $this->current <= $this->end : $this->current >= $this->end;
+        return $this->step > 0
+            ? $this->current <= $this->end + self::EPSILON
+            : $this->current >= $this->end - self::EPSILON;
     }
 
     /**
@@ -166,11 +222,54 @@ class RangeIterator implements \Iterator, \Countable
      */
     public function count(): int
     {
-        if (($this->step > 0 && $this->end < $this->start)
-            || ($this->step < 0 && $this->end > $this->start)) {
-            return 0;
+        $length = abs($this->end - $this->start);
+
+        if ($length <= self::EPSILON) {
+            return 1;
         }
 
-        return intdiv(abs($this->end - $this->start), abs($this->step)) + 1;
+        $step = abs($this->step);
+        $quotient = $length / $step;
+        $wholeSteps = (int) floor($quotient + self::EPSILON);
+        $count = $wholeSteps + 1;
+        $hasRemainder = abs($quotient - $wholeSteps) > self::EPSILON;
+
+        if ($this->includeBoundary && $hasRemainder) {
+            ++$count;
+        }
+
+        return $count;
+    }
+
+    /**
+     * Checks whether the given value is effectively equal to the range boundary.
+     *
+     * This method accounts for floating-point precision issues by using a tolerance value (EPSILON)
+     * to determine if the current value is close enough to the end value to be considered at the boundary.
+     *
+     * @param float|int $value the value to check against the boundary
+     *
+     * @return bool true if the value is effectively at the boundary, false otherwise
+     */
+    private function isAtBoundary(float|int $value): bool
+    {
+        return abs($value - $this->end) <= self::EPSILON;
+    }
+
+    /**
+     * Checks whether the projected next value would exceed the range boundary.
+     *
+     * This method is used to determine if the next step would overshoot the end value,
+     * which is important when the `includeBoundary` option is enabled to ensure thatthe boundary value is yielded when appropriate.
+     *
+     * @param float|int $projected the next value after applying the step
+     *
+     * @return bool true if the projected value would overshoot the end boundary, false otherwise
+     */
+    private function wouldOvershoot(float|int $projected): bool
+    {
+        return $this->step > 0
+            ? $projected > $this->end + self::EPSILON
+            : $projected < $this->end - self::EPSILON;
     }
 }

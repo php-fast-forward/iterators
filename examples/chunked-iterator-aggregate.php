@@ -8,9 +8,12 @@ declare(strict_types=1);
  * This source file is subject to the license that is bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/iterators
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/iterators
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 use FastForward\Iterator\ChunkedIteratorAggregate;
@@ -22,7 +25,7 @@ require_once dirname(__DIR__) . '/vendor/autoload.php';
 /**
  * Sample dataset to be chunked.
  *
- * @var array<int, int> $data
+ * @var array<int, int>
  */
 $data = range(1, 10);
 
@@ -31,7 +34,7 @@ $data = range(1, 10);
  *
  * This splits the data into subarrays of at most 3 elements each.
  *
- * @var ChunkedIteratorAggregate<int> $chunkedIterator
+ * @var ChunkedIteratorAggregate<int>
  */
 $chunkedIterator = new ChunkedIteratorAggregate($data, 3);
 
@@ -40,7 +43,7 @@ $chunkedIterator = new ChunkedIteratorAggregate($data, 3);
  *
  * This demonstrates how different chunk sizes affect iteration.
  *
- * @var ChunkedIteratorAggregate<int> $chunkedIteratorFour
+ * @var ChunkedIteratorAggregate<int>
  */
 $chunkedIteratorFour = new ChunkedIteratorAggregate(new ArrayIterator($data), 4);
 

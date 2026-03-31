@@ -8,12 +8,22 @@ declare(strict_types=1);
  * This source file is subject to the license that is bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/iterators
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/iterators
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 namespace FastForward\Iterator;
+
+use FilesystemIterator;
+use RecursiveIterator;
+use RecursiveIteratorIterator;
+use IteratorIterator;
+use RecursiveDirectoryIterator;
+use SplFileInfo;
 
 /**
  * Class FileExtensionFilterIterator.
@@ -41,35 +51,30 @@ namespace FastForward\Iterator;
  *
  * **Note:** If a `RecursiveIterator` is provided, the iterator will traverse subdirectories.
  *
- * @package FastForward\Iterator
- *
  * @since 1.0.0
  */
-class FileExtensionFilterIterator extends \FilterIterator
+class FileExtensionFilterIterator extends CountableFilterIterator
 {
     /**
      * The file extensions to accept.
      *
      * @var string[]
      */
-    private array $extensions;
+    private readonly array $extensions;
 
     /**
      * Initializes the FileExtensionFilterIterator.
      *
-     * @param \FilesystemIterator|\RecursiveDirectoryIterator $iterator      the directory iterator to wrap
-     * @param string                                          ...$extensions The allowed file extensions.
+     * @param FilesystemIterator|RecursiveDirectoryIterator $iterator the directory iterator to wrap
+     * @param string ...$extensions The allowed file extensions.
      */
-    public function __construct(\FilesystemIterator $iterator, string ...$extensions)
+    public function __construct(FilesystemIterator $iterator, string ...$extensions)
     {
-        $this->extensions = array_map(
-            static fn (string $fileType): string => mb_ltrim($fileType, '.'),
-            $extensions
-        );
+        $this->extensions = array_map(static fn(string $fileType): string => mb_ltrim($fileType, '.'), $extensions);
 
-        $innerIterator = $iterator instanceof \RecursiveIterator
-            ? new \RecursiveIteratorIterator($iterator)
-            : new \IteratorIterator($iterator);
+        $innerIterator = $iterator instanceof RecursiveIterator
+            ? new RecursiveIteratorIterator($iterator)
+            : new IteratorIterator($iterator);
 
         parent::__construct($innerIterator);
     }
@@ -84,14 +89,14 @@ class FileExtensionFilterIterator extends \FilterIterator
      */
     public function accept(): bool
     {
-        /** @var \SplFileInfo $current */
+        /** @var SplFileInfo $current */
         $current = $this->current();
 
         if ($current->isDir()) {
-            return $this->getInnerIterator() instanceof \RecursiveIterator;
+            return $this->getInnerIterator() instanceof RecursiveIterator;
         }
 
-        $extension = pathinfo($current->getFilename(), PATHINFO_EXTENSION);
+        $extension = pathinfo($current->getFilename(), \PATHINFO_EXTENSION);
 
         return \in_array($extension, $this->extensions, true);
     }

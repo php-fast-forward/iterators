@@ -8,12 +8,20 @@ declare(strict_types=1);
  * This source file is subject to the license that is bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/iterators
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/iterators
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 namespace FastForward\Iterator;
+
+use IteratorAggregate;
+use IteratorIterator;
+use Closure;
+use Generator;
 
 /**
  * Class GeneratorRewindableIterator.
@@ -67,28 +75,26 @@ namespace FastForward\Iterator;
  * **Note:** This implementation ensures that the generator can be rewound
  * by caching its results using `GeneratorCachingIteratorAggregate`.
  *
- * @package FastForward\Iterator
- *
  * @since 1.0.0
  */
-class GeneratorRewindableIterator implements \Iterator
+class GeneratorRewindableIterator extends CountableIterator
 {
     /**
-     * @var \IteratorAggregate the iterator aggregate that caches generated values
+     * @var IteratorAggregate the iterator aggregate that caches generated values
      */
-    private \IteratorAggregate $iteratorAggregate;
+    private readonly IteratorAggregate $iteratorAggregate;
 
     /**
-     * @var \IteratorIterator the internal innerIterator iterator used for iteration
+     * @var IteratorIterator the internal innerIterator iterator used for iteration
      */
-    private \IteratorIterator $innerIterator;
+    private IteratorIterator $innerIterator;
 
     /**
      * Initializes the GeneratorRewindableIterator with a generator or a closure returning a generator.
      *
-     * @param \Closure|\Generator $generator a generator instance or a callable that returns a generator
+     * @param Closure|Generator $generator a generator instance or a callable that returns a generator
      */
-    public function __construct(\Closure|\Generator $generator)
+    public function __construct(Closure|Generator $generator)
     {
         $this->iteratorAggregate = new GeneratorCachingIteratorAggregate($generator);
     }
@@ -98,10 +104,12 @@ class GeneratorRewindableIterator implements \Iterator
      *
      * This method creates a new `IteratorIterator` instance wrapping the
      * `GeneratorCachingIteratorAggregate`, ensuring that the generator can be reused.
+     *
+     * @return void
      */
     public function rewind(): void
     {
-        $this->innerIterator = new \IteratorIterator($this->iteratorAggregate->getIterator());
+        $this->innerIterator = new IteratorIterator($this->iteratorAggregate->getIterator());
         $this->innerIterator->rewind();
     }
 
@@ -127,6 +135,8 @@ class GeneratorRewindableIterator implements \Iterator
 
     /**
      * Advances the iterator to the next element.
+     *
+     * @return void
      */
     public function next(): void
     {

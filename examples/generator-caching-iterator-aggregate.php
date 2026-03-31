@@ -8,9 +8,12 @@ declare(strict_types=1);
  * This source file is subject to the license that is bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/iterators
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/iterators
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 use FastForward\Iterator\GeneratorCachingIteratorAggregate;
@@ -22,7 +25,7 @@ require_once dirname(__DIR__) . '/vendor/autoload.php';
 /**
  * Number of elements to generate.
  *
- * @var int $len
+ * @var int
  */
 $len = 5;
 
@@ -46,16 +49,16 @@ $generatorFactory = static function (int $len = 10): Generator {
  *
  * This approach allows lazy execution of the generator when iterated.
  *
- * @var GeneratorCachingIteratorAggregate<string> $generatorCallableCache
+ * @var GeneratorCachingIteratorAggregate<string>
  */
-$generatorCallableCache = new GeneratorCachingIteratorAggregate(static fn () => $generatorFactory($len));
+$generatorCallableCache = new GeneratorCachingIteratorAggregate(static fn(): Generator => $generatorFactory($len));
 
 /**
  * Creates a GeneratorCachingIteratorAggregate using a directly instantiated generator.
  *
  * This approach evaluates the generator immediately and caches the result.
  *
- * @var GeneratorCachingIteratorAggregate<string> $generatorCache
+ * @var GeneratorCachingIteratorAggregate<string>
  */
 $generatorCache = new GeneratorCachingIteratorAggregate($generatorFactory($len));
 
@@ -69,11 +72,5 @@ debugIterable(
     'GeneratorCachingIteratorAggregate :: Generator Closure Strategy :: Second Iteration'
 );
 
-debugIterable(
-    $generatorCache,
-    'GeneratorCachingIteratorAggregate :: Generator Strategy :: First Iteration'
-);
-debugIterable(
-    $generatorCache,
-    'GeneratorCachingIteratorAggregate :: Generator Strategy :: Second Iteration'
-);
+debugIterable($generatorCache, 'GeneratorCachingIteratorAggregate :: Generator Strategy :: First Iteration');
+debugIterable($generatorCache, 'GeneratorCachingIteratorAggregate :: Generator Strategy :: Second Iteration');

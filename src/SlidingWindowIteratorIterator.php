@@ -8,12 +8,17 @@ declare(strict_types=1);
  * This source file is subject to the license that is bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/iterators
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/iterators
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 namespace FastForward\Iterator;
+
+use InvalidArgumentException;
 
 /**
  * Class SlidingWindowIteratorIterator.
@@ -23,16 +28,14 @@ namespace FastForward\Iterator;
  * This iterator returns overlapping windows of elements with keys
  * starting from `0` and incrementing sequentially.
  *
- * @package FastForward\Iterator
- *
  * @since 1.0.0
  */
-class SlidingWindowIteratorIterator extends \IteratorIterator
+class SlidingWindowIteratorIterator extends CountableIteratorIterator
 {
     /**
      * @var int the fixed size of each sliding window
      */
-    private int $windowSize;
+    private readonly int $windowSize;
 
     /**
      * @var array<int, mixed> the buffer holding the current window of elements
@@ -47,15 +50,15 @@ class SlidingWindowIteratorIterator extends \IteratorIterator
     /**
      * Initializes the SlidingWindowIteratorIterator.
      *
-     * @param iterable $iterator   the iterator containing values
-     * @param int      $windowSize the number of elements per window (must be >= 1)
+     * @param iterable $iterator the iterator containing values
+     * @param int $windowSize the number of elements per window (must be >= 1)
      *
-     * @throws \InvalidArgumentException if $windowSize is less than 1
+     * @throws InvalidArgumentException if $windowSize is less than 1
      */
     public function __construct(iterable $iterator, int $windowSize)
     {
         if ($windowSize < 1) {
-            throw new \InvalidArgumentException('Window size must be at least 1.');
+            throw new InvalidArgumentException('Window size must be at least 1.');
         }
 
         parent::__construct(new IterableIterator($iterator));
@@ -64,11 +67,18 @@ class SlidingWindowIteratorIterator extends \IteratorIterator
 
     /**
      * Advances to the next element, maintaining the sliding window.
+     *
+     * @return void
      */
     public function next(): void
     {
         array_shift($this->window);
-        parent::next();
+
+        if (parent::valid()) {
+            $this->window[] = parent::current();
+            parent::next();
+        }
+
         ++$this->key;
     }
 
@@ -102,21 +112,24 @@ class SlidingWindowIteratorIterator extends \IteratorIterator
      */
     public function valid(): bool
     {
-        while (parent::valid() && \count($this->window) < $this->windowSize) {
-            $this->window[] = parent::current();
-            parent::next();
-        }
-
         return \count($this->window) === $this->windowSize;
     }
 
     /**
      * Resets the iterator, allowing re-iteration.
+     *
+     * @return void
      */
     public function rewind(): void
     {
         parent::rewind();
+
         $this->window = [];
         $this->key    = 0;
+
+        while (parent::valid() && \count($this->window) < $this->windowSize) {
+            $this->window[] = parent::current();
+            parent::next();
+        }
     }
 }

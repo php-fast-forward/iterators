@@ -8,12 +8,17 @@ declare(strict_types=1);
  * This source file is subject to the license that is bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/iterators
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/iterators
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 namespace FastForward\Iterator;
+
+use Closure;
 
 /**
  * Class GroupByIteratorIterator.
@@ -52,17 +57,10 @@ namespace FastForward\Iterator;
  *
  * **Note:** The iterator must be rewound before iterating again to ensure correct grouping.
  *
- * @package FastForward\Iterator
- *
  * @since 1.0.0
  */
-class GroupByIteratorIterator extends \IteratorIterator
+class GroupByIteratorIterator extends CountableIteratorIterator
 {
-    /**
-     * @var \Closure the callback function used to determine group keys
-     */
-    private \Closure $groupBy;
-
     /**
      * @var array<mixed, array<int, mixed>> holds grouped elements
      */
@@ -72,18 +70,21 @@ class GroupByIteratorIterator extends \IteratorIterator
      * Initializes the GroupByIteratorIterator.
      *
      * @param iterable $iterator the iterator containing values to be grouped
-     * @param \Closure $groupBy  a function that determines the group key for each element
+     * @param Closure $groupBy a function that determines the group key for each element
      */
-    public function __construct(iterable $iterator, \Closure $groupBy)
-    {
+    public function __construct(
+        iterable $iterator,
+        private readonly Closure $groupBy
+    ) {
         parent::__construct(new IterableIterator($iterator));
-        $this->groupBy = $groupBy;
     }
 
     /**
      * Rewinds the iterator and reprocesses the grouping.
      *
      * This ensures that the grouping is correctly recomputed when the iterator is reset.
+     *
+     * @return void
      */
     public function rewind(): void
     {
@@ -120,6 +121,8 @@ class GroupByIteratorIterator extends \IteratorIterator
 
     /**
      * Advances to the next group in the iterator.
+     *
+     * @return void
      */
     public function next(): void
     {

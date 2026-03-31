@@ -8,9 +8,12 @@ declare(strict_types=1);
  * This source file is subject to the license that is bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/iterators
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/iterators
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 use FastForward\Iterator\ClosureFactoryIteratorAggregate;
@@ -41,30 +44,21 @@ $generatorFactory = static function (int $len = 10) {
  *
  * @return ArrayIterator<int, string> an ArrayIterator wrapping a static array
  */
-$arrayFactory = static fn (int $len = 10) => new ArrayIterator(array_map(static fn ($i) => 'Value: ' . ($i + $len), range(0, $len - 1)));
+$arrayFactory = static fn(int $len = 10): ArrayIterator => new ArrayIterator(array_map(
+    static fn($i): string => 'Value: ' . ($i + $len),
+    range(0, $len - 1)
+));
 
 // Using ClosureFactoryIteratorAggregate with a Generator function
-$generatorIterator = new ClosureFactoryIteratorAggregate(static fn () => $generatorFactory($len));
+$generatorIterator = new ClosureFactoryIteratorAggregate(static fn(): Generator => $generatorFactory($len));
 // or
 // $generatorIterator = new ClosureFactoryIteratorAggregate($generatorFactory);
 
 // Using ClosureFactoryIteratorAggregate with an ArrayIterator
-$arrayIterator = new ClosureFactoryIteratorAggregate(static fn () => $arrayFactory($len));
+$arrayIterator = new ClosureFactoryIteratorAggregate(static fn(): ArrayIterator => $arrayFactory($len));
 
-debugIterable(
-    $generatorIterator,
-    'ClosureFactoryIteratorAggregate :: Generator Strategy :: First Iteration',
-);
-debugIterable(
-    $generatorIterator,
-    'ClosureFactoryIteratorAggregate :: Generator Strategy :: Second Iteration',
-);
+debugIterable($generatorIterator, 'ClosureFactoryIteratorAggregate :: Generator Strategy :: First Iteration');
+debugIterable($generatorIterator, 'ClosureFactoryIteratorAggregate :: Generator Strategy :: Second Iteration');
 
-debugIterable(
-    $arrayIterator,
-    'ClosureFactoryIteratorAggregate :: ArrayIterator Strategy :: First Iteration',
-);
-debugIterable(
-    $arrayIterator,
-    'ClosureFactoryIteratorAggregate :: ArrayIterator Strategy :: Second Iteration',
-);
+debugIterable($arrayIterator, 'ClosureFactoryIteratorAggregate :: ArrayIterator Strategy :: First Iteration');
+debugIterable($arrayIterator, 'ClosureFactoryIteratorAggregate :: ArrayIterator Strategy :: Second Iteration');

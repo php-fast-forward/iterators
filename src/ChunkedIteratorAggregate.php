@@ -8,12 +8,17 @@ declare(strict_types=1);
  * This source file is subject to the license that is bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/iterators
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/iterators
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 namespace FastForward\Iterator;
+
+use Traversable;
 
 /**
  * Class ChunkedIteratorAggregate.
@@ -42,31 +47,25 @@ namespace FastForward\Iterator;
  * // [10]
  * ```
  *
- * @package FastForward\Iterator
- *
  * @since 1.0.0
  */
-class ChunkedIteratorAggregate implements \IteratorAggregate
+class ChunkedIteratorAggregate extends CountableIteratorAggregate
 {
-    /**
-     * @var iterable the iterator being chunked
-     */
-    private iterable $iterator;
-
     /**
      * @var int the size of each chunk
      */
-    private int $chunkSize;
+    private readonly int $chunkSize;
 
     /**
      * Initializes the ChunkedIteratorAggregate.
      *
-     * @param iterable $iterator  the iterator containing values to be chunked
-     * @param int      $chunkSize the number of elements per chunk (must be >= 1)
+     * @param iterable $iterator the iterator containing values to be chunked
+     * @param int $chunkSize the number of elements per chunk (must be >= 1)
      */
-    public function __construct(iterable $iterator, int $chunkSize)
-    {
-        $this->iterator  = $iterator;
+    public function __construct(
+        private readonly iterable $iterator,
+        int $chunkSize
+    ) {
         $this->chunkSize = max(1, $chunkSize);
     }
 
@@ -76,20 +75,22 @@ class ChunkedIteratorAggregate implements \IteratorAggregate
      * The iteration groups elements from the original iterator into
      * subarrays of `$chunkSize` elements each.
      *
-     * @return \Traversable<int, array<int, mixed>> the iterator yielding chunked arrays
+     * @return Traversable<int, array<int, mixed>> the iterator yielding chunked arrays
      */
-    public function getIterator(): \Traversable
+    public function getIterator(): Traversable
     {
         $buffer = [];
+
         foreach ($this->iterator as $value) {
             $buffer[] = $value;
+
             if (\count($buffer) === $this->chunkSize) {
                 yield $buffer;
                 $buffer = [];
             }
         }
 
-        if ($buffer) {
+        if ([] !== $buffer) {
             yield $buffer;
         }
     }

@@ -8,12 +8,19 @@ declare(strict_types=1);
  * This source file is subject to the license that is bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/iterators
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/iterators
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 namespace FastForward\Iterator;
+
+use LimitIterator;
+use Countable;
+use InfiniteIterator;
 
 /**
  * Class RepeatableIteratorIterator.
@@ -45,31 +52,23 @@ namespace FastForward\Iterator;
  * **Note:** The iterator **does not consume** values permanently,
  * as it is backed by an `InfiniteIterator` and `LimitIterator`.
  *
- * @package FastForward\Iterator
- *
  * @since 1.0.0
  */
-class RepeatableIteratorIterator extends \LimitIterator implements \Countable
+class RepeatableIteratorIterator extends LimitIterator implements Countable
 {
-    /**
-     * @var int the maximum number of elements to iterate over per cycle
-     */
-    private int $limit;
-
     /**
      * Initializes the RepeatableIteratorIterator.
      *
      * @param iterable $iterator the iterator to be wrapped in an infinite loop
-     * @param int      $limit    the maximum number of elements to iterate over per cycle
-     * @param int      $offset   the starting offset within the iterator
+     * @param int $limit the maximum number of elements to iterate over per cycle
+     * @param int $offset the starting offset within the iterator
      */
     public function __construct(
         iterable $iterator,
-        int $limit,
+        private readonly int $limit,
         int $offset = 0
     ) {
-        $this->limit = $limit;
-        parent::__construct(new \InfiniteIterator(new IterableIterator($iterator)), $offset, $limit);
+        parent::__construct(new InfiniteIterator(new IterableIterator($iterator)), $offset, $this->limit);
     }
 
     /**

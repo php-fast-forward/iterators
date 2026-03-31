@@ -8,9 +8,12 @@ declare(strict_types=1);
  * This source file is subject to the license that is bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/iterators
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/iterators
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 use FastForward\Iterator\RepeatableIteratorIterator;
@@ -22,7 +25,7 @@ require_once dirname(__DIR__) . '/vendor/autoload.php';
 /**
  * Creates an ArrayIterator with sample data.
  *
- * @var ArrayIterator<int, string> $data
+ * @var ArrayIterator<int, string>
  */
 $data = new ArrayIterator(['A', 'B', 'C', 'D', 'E']);
 
@@ -31,7 +34,7 @@ $data = new ArrayIterator(['A', 'B', 'C', 'D', 'E']);
  *
  * This allows cycling over a subset of the iterator.
  *
- * @var RepeatableIteratorIterator<string> $repeatableIterator
+ * @var RepeatableIteratorIterator<string>
  */
 $repeatableIterator = new RepeatableIteratorIterator($data, 10);
 
@@ -40,13 +43,13 @@ $repeatableIterator = new RepeatableIteratorIterator($data, 10);
  *
  * This demonstrates the behavior of the `$offset` parameter.
  *
- * @var RepeatableIteratorIterator<string> $repeatableIteratorWithOffset
+ * @var RepeatableIteratorIterator<string>
  */
 $repeatableIteratorWithOffset = new RepeatableIteratorIterator($data, 10, 2);
 
 // Display the count of elements in the RepeatableIteratorIterator.
-echo 'Total elements in repeatable iteration (default offset): ' . count($repeatableIterator) . PHP_EOL;
-echo 'Total elements in repeatable iteration (offset = 2): ' . count($repeatableIteratorWithOffset) . PHP_EOL;
+echo 'Total elements in repeatable iteration (default offset): ' . count($repeatableIterator) . \PHP_EOL;
+echo 'Total elements in repeatable iteration (offset = 2): ' . count($repeatableIteratorWithOffset) . \PHP_EOL;
 
 // Debugging iteration to show repeated cycling.
 debugIterable($repeatableIterator, 'RepeatableIteratorIterator :: Default Offset');

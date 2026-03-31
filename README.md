@@ -1,10 +1,13 @@
 # FastForward\Iterators
 
-[![PHP Version](https://img.shields.io/badge/php-7.4%20%7C%208.0%2B-blue.svg)](https://www.php.net/)
+[![PHP Version](https://img.shields.io/badge/php-8.3%2B-blue.svg)](https://www.php.net/)
 [![License](https://img.shields.io/github/license/php-fast-forward/iterators)](https://opensource.org/licenses/MIT)
 
-A robust and optimized library for advanced PHP Iterators.  
-Enhance your PHP applications with high-performance iterators, supporting lookahead, peeking, filtering, grouping, and more.
+A robust and optimized library for advanced PHP Iterators.
+
+Enhance your PHP applications with high-performance iterators: lookahead, peeking, filtering, grouping, chunking, and more.
+
+---
 
 ## ✨ Features
 
@@ -19,14 +22,77 @@ Enhance your PHP applications with high-performance iterators, supporting lookah
 Install via Composer:
 
 ```bash
-composer require fast-forward/iterators
+composer require php-fast-forward/iterators
 ```
 
-## 🛠 Usage
+**Requirements:** PHP 8.3 or higher
 
-This package provides various iterator utilities under the `FastForward\Iterator` namespace.
+## 🚀 Quickstart
 
-Check out the [`examples/`](https://github.com/php-fast-forward/iterators/tree/main/examples) directory for hands-on usage of each iterator.
+```php
+use FastForward\Iterator\ChunkedIteratorAggregate;
+
+$data = range(1, 10);
+$chunked = new ChunkedIteratorAggregate($data, 3);
+foreach ($chunked as $chunk) {
+	print_r($chunk);
+}
+```
+
+**Expected output:**
+
+```
+Array
+(
+	[0] => 1
+	[1] => 2
+	[2] => 3
+)
+Array
+(
+	[0] => 4
+	[1] => 5
+	[2] => 6
+)
+Array
+(
+	[0] => 7
+	[1] => 8
+	[2] => 9
+)
+Array
+(
+	[0] => 10
+)
+```
+
+## 🛠 Usage Patterns
+
+All iterators and utilities are available under the `FastForward\Iterator` namespace. Simply require Composer's autoloader:
+
+```php
+require_once 'vendor/autoload.php';
+use FastForward\Iterator\ChunkedIteratorAggregate;
+use FastForward\Iterator\SlidingWindowIteratorIterator;
+// ...
+```
+
+You can chain, compose, and adapt iterators for a wide variety of data processing tasks.
+
+## 📚 Documentation & Examples
+
+- 📖 [Full Documentation](https://github.com/php-fast-forward/iterators/tree/main/docs)
+- 🧑‍💻 [Examples Directory](https://github.com/php-fast-forward/iterators/tree/main/examples)
+  - Each file demonstrates a specific iterator or pattern:
+	- [chunked-iterator-aggregate.php](https://github.com/php-fast-forward/iterators/blob/main/examples/chunked-iterator-aggregate.php)
+	- [sliding-window-iterator-iterator.php](https://github.com/php-fast-forward/iterators/blob/main/examples/sliding-window-iterator-iterator.php)
+	- [unique-iterator-iterator.php](https://github.com/php-fast-forward/iterators/blob/main/examples/unique-iterator-iterator.php)
+	- [lookahead-iterator.php](https://github.com/php-fast-forward/iterators/blob/main/examples/lookahead-iterator.php)
+	- ...and more!
+
+## 🤝 Contributing
+
+Contributions, bug reports and suggestions are welcome! Please open an issue or pull request on [GitHub](https://github.com/php-fast-forward/iterators).
 
 ## 🧑‍💻 Author
 

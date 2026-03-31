@@ -8,12 +8,18 @@ declare(strict_types=1);
  * This source file is subject to the license that is bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/iterators
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/iterators
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 namespace FastForward\Iterator;
+
+use Countable;
+use Iterator;
 
 /**
  * Class ChainIterableIterator.
@@ -36,14 +42,12 @@ namespace FastForward\Iterator;
  * // Output: 1234
  * ```
  *
- * @package FastForward\Iterator
- *
  * @since 1.1.0
  */
-final class ChainIterableIterator implements \Iterator
+final class ChainIterableIterator implements Iterator, Countable
 {
     /**
-     * @var \Iterator[] a list of iterators chained in sequence
+     * @var Iterator[] a list of iterators chained in sequence
      */
     private array $iterators;
 
@@ -51,6 +55,11 @@ final class ChainIterableIterator implements \Iterator
      * @var int the index of the currently active iterator
      */
     private int $currentIndex = 0;
+
+    /**
+     * @var int the normalized sequential key across all chained iterators
+     */
+    private int $position = 0;
 
     /**
      * Constructs a ChainIterableIterator with one or more iterable sources.
@@ -65,8 +74,24 @@ final class ChainIterableIterator implements \Iterator
     public function __construct(iterable ...$iterables)
     {
         $this->iterators = array_map(
-            static fn (iterable $iterable) => new IterableIterator($iterable),
+            static fn(iterable $iterable): IterableIterator => new IterableIterator($iterable),
             $iterables
+        );
+    }
+
+    /**
+     * Counts the total number of elements across all chained iterators.
+     *
+     * This method iterates through each underlying iterator and sums their counts.
+     *
+     * @return int the total count of elements in all chained iterators
+     */
+    public function count(): int
+    {
+        return array_reduce(
+            $this->iterators,
+            static fn(int $carry, IterableIterator $iterator): int => $carry + $iterator->count(),
+            0
         );
     }
 
@@ -74,14 +99,24 @@ final class ChainIterableIterator implements \Iterator
      * Rewinds all underlying iterators and resets the position.
      *
      * Each chained iterator SHALL be rewound to its beginning.
+     *
+     * @return void
      */
     public function rewind(): void
     {
+        $this->currentIndex = 0;
+        $this->position = 0;
         foreach ($this->iterators as $iterable) {
             $iterable->rewind();
         }
 
-        $this->currentIndex = 0;
+        // Após o rewind, reposiciona no primeiro iterador válido
+        while (
+            isset($this->iterators[$this->currentIndex])
+            && ! $this->iterators[$this->currentIndex]->valid()
+        ) {
+            ++$this->currentIndex;
+        }
     }
 
     /**
@@ -93,24 +128,21 @@ final class ChainIterableIterator implements \Iterator
      */
     public function valid(): bool
     {
-        while (isset($this->iterators[$this->currentIndex])) {
-            if ($this->iterators[$this->currentIndex]->valid()) {
-                return true;
-            }
-            ++$this->currentIndex;
+        if (! isset($this->iterators[$this->currentIndex])) {
+            return false;
         }
 
-        return false;
+        return $this->iterators[$this->currentIndex]->valid();
     }
 
     /**
      * Returns the current element from the active iterator.
      *
-     * @return null|mixed the current element or NULL if iteration is invalid
+     * @return mixed|null the current element or NULL if iteration is invalid
      */
     public function current(): mixed
     {
-        if (!$this->valid()) {
+        if (! $this->valid()) {
             return null;
         }
 
@@ -118,28 +150,39 @@ final class ChainIterableIterator implements \Iterator
     }
 
     /**
-     * Returns the current key from the active iterator.
-     *
-     * @return null|mixed the current key or NULL if iteration is invalid
+     * @return int|null
      */
-    public function key(): mixed
+    public function key(): ?int
     {
-        if (!$this->valid()) {
+        if (! $this->valid()) {
             return null;
         }
 
-        return $this->iterators[$this->currentIndex]->key();
+        return $this->position;
     }
 
     /**
      * Moves the pointer of the active iterator forward.
+     *
+     * @return void
      */
     public function next(): void
     {
-        if (!$this->valid()) {
+        if (! isset($this->iterators[$this->currentIndex])) {
             return;
         }
 
         $this->iterators[$this->currentIndex]->next();
+
+        while (
+            isset($this->iterators[$this->currentIndex])
+            && ! $this->iterators[$this->currentIndex]->valid()
+        ) {
+            ++$this->currentIndex;
+        }
+
+        if ($this->valid()) {
+            ++$this->position;
+        }
     }
 }

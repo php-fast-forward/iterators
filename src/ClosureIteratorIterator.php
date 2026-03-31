@@ -8,12 +8,17 @@ declare(strict_types=1);
  * This source file is subject to the license that is bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/iterators
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/iterators
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 namespace FastForward\Iterator;
+
+use Closure;
 
 /**
  * Class ClosureIteratorIterator.
@@ -43,27 +48,21 @@ namespace FastForward\Iterator;
  * }
  * ```
  *
- * @package FastForward\Iterator
- *
  * @since 1.0.0
  */
-class ClosureIteratorIterator extends \IteratorIterator
+class ClosureIteratorIterator extends CountableIteratorIterator
 {
-    /**
-     * @var \Closure the transformation function applied to each element
-     */
-    private readonly \Closure $closure;
-
     /**
      * Initializes the ClosureIteratorIterator.
      *
      * @param iterable $iterator the underlying iterator to wrap
-     * @param \Closure $closure  the transformation function applied to each element
+     * @param Closure $closure the transformation function applied to each element
      */
-    public function __construct(iterable $iterator, \Closure $closure)
-    {
+    public function __construct(
+        iterable $iterator,
+        private readonly Closure $closure
+    ) {
         parent::__construct(new IterableIterator($iterator));
-        $this->closure = $closure;
     }
 
     /**

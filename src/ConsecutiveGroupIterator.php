@@ -8,12 +8,17 @@ declare(strict_types=1);
  * This source file is subject to the license that is bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/iterators
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/iterators
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 namespace FastForward\Iterator;
+
+use Closure;
 
 /**
  * Class ConsecutiveGroupIterator.
@@ -48,34 +53,33 @@ namespace FastForward\Iterator;
  *
  * **Note:** The chunking behavior is defined by the callback function.
  *
- * @package FastForward\Iterator
- *
  * @since 1.0.0
  */
-class ConsecutiveGroupIterator extends \IteratorIterator
+class ConsecutiveGroupIterator extends CountableIteratorIterator
 {
-    /**
-     * @var \Closure the callback function that determines when to start a new chunk
-     */
-    private \Closure $callback;
-
     /**
      * @var array<int, mixed> the buffer storing the current chunk of elements
      */
     private array $buffer = [];
 
     /**
+     * @var int the current group key for the iterator
+     */
+    private int $groupKey = 0;
+
+    /**
      * Initializes the ConsecutiveGroupIterator.
      *
      * @param iterable $iterator the iterator containing values to be chunked
-     * @param \Closure $callback The function that determines whether elements should be in the same chunk.
-     *                           It receives two arguments: `$previous` and `$current`,
-     *                           and must return `true` to keep them together or `false` to start a new chunk.
+     * @param Closure $callback The function that determines whether elements should be in the same chunk.
+     *                          It receives two arguments: `$previous` and `$current`,
+     *                          and must return `true` to keep them together or `false` to start a new chunk.
      */
-    public function __construct(iterable $iterator, \Closure $callback)
-    {
+    public function __construct(
+        iterable $iterator,
+        private readonly Closure $callback
+    ) {
         parent::__construct(new IterableIterator($iterator));
-        $this->callback = $callback;
     }
 
     /**
@@ -89,22 +93,24 @@ class ConsecutiveGroupIterator extends \IteratorIterator
     }
 
     /**
+     * Retrieves the current group key.
+     *
+     * @return int|null the current group key, or null if the iterator is not valid
+     */
+    public function key(): ?int
+    {
+        return $this->valid() ? $this->groupKey : null;
+    }
+
+    /**
      * Advances to the next chunk of elements.
+     *
+     * @return void
      */
     public function next(): void
     {
-        $this->buffer = [];
-
-        while (parent::valid()) {
-            $currentValue = parent::current();
-
-            if (!empty($this->buffer)
-                && !($this->callback)($this->buffer[\count($this->buffer) - 1], $currentValue)) {
-                break;
-            }
-
-            $this->buffer[] = $currentValue;
-            parent::next();
+        if ($this->loadChunk()) {
+            ++$this->groupKey;
         }
     }
 
@@ -115,15 +121,47 @@ class ConsecutiveGroupIterator extends \IteratorIterator
      */
     public function valid(): bool
     {
-        return !empty($this->buffer);
+        return [] !== $this->buffer;
     }
 
     /**
      * Resets the iterator and prepares the first chunk.
+     *
+     * @return void
      */
     public function rewind(): void
     {
         parent::rewind();
-        $this->next();
+        $this->loadChunk();
+        $this->groupKey = 0;
+    }
+
+    /**
+     * Loads the next chunk of elements based on the callback condition.
+     *
+     * This method fills the buffer with consecutive elements that satisfy the callback condition.
+     *
+     * @return bool true if a chunk was loaded, false otherwise
+     */
+    private function loadChunk(): bool
+    {
+        $this->buffer = [];
+
+        while (parent::valid()) {
+            $currentValue = parent::current();
+
+            if ([] !== $this->buffer) {
+                $lastValue = $this->buffer[array_key_last($this->buffer)];
+
+                if (! ($this->callback)($lastValue, $currentValue)) {
+                    break;
+                }
+            }
+
+            $this->buffer[] = $currentValue;
+            parent::next();
+        }
+
+        return [] !== $this->buffer;
     }
 }

@@ -8,9 +8,12 @@ declare(strict_types=1);
  * This source file is subject to the license that is bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/iterators
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/iterators
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 use FastForward\Iterator\FileExtensionFilterIterator;
@@ -26,15 +29,12 @@ $directoryPath = __DIR__; // Change this to the directory you want to scan
  *
  * This example filters files with `.php` extension.
  *
- * @param string $directory     the directory to scan
+ * @param string $directory the directory to scan
  * @param string ...$extensions The file extensions to allow.
  *
  * @return FileExtensionFilterIterator the filtered iterator
  */
-$iterator = new FileExtensionFilterIterator(
-    new FilesystemIterator($directoryPath),
-    'php'
-);
+$iterator = new FileExtensionFilterIterator(new FilesystemIterator($directoryPath), 'php');
 
 debugIterable($iterator, 'FileExtensionFilterIterator :: Filtering .php and .txt files');
 
@@ -43,7 +43,7 @@ debugIterable($iterator, 'FileExtensionFilterIterator :: Filtering .php and .txt
  *
  * This example filters `.md` and `.json` files recursively.
  *
- * @param string $directory     the directory to scan recursively
+ * @param string $directory the directory to scan recursively
  * @param string ...$extensions The file extensions to allow.
  *
  * @return FileExtensionFilterIterator the filtered recursive iterator

@@ -8,12 +8,18 @@ declare(strict_types=1);
  * This source file is subject to the license that is bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/iterators
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/iterators
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 namespace FastForward\Iterator;
+
+use Iterator;
+use InvalidArgumentException;
 
 /**
  * Class ZipIteratorIterator.
@@ -47,16 +53,14 @@ namespace FastForward\Iterator;
  *
  * **Note:** The iterator stops when the shortest iterable is exhausted.
  *
- * @package FastForward\Iterator
- *
  * @since 1.0.0
  */
-class ZipIteratorIterator implements \Iterator
+class ZipIteratorIterator extends CountableIterator
 {
     /**
-     * @var array<int, \Iterator> the list of active iterators
+     * @var array<int, Iterator> the list of active iterators
      */
-    private array $iterators;
+    private readonly array $iterators;
 
     /**
      * @var int the current iteration index
@@ -68,16 +72,16 @@ class ZipIteratorIterator implements \Iterator
      *
      * @param iterable ...$iterators The iterators to be combined.
      *
-     * @throws \InvalidArgumentException if fewer than two iterators are provided
+     * @throws InvalidArgumentException if fewer than two iterators are provided
      */
     public function __construct(iterable ...$iterators)
     {
         if (\count($iterators) < 2) {
-            throw new \InvalidArgumentException('At least two iterators are required.');
+            throw new InvalidArgumentException('At least two iterators are required.');
         }
 
         $this->iterators = array_map(
-            static fn (\Traversable $iterator): \Iterator => new IterableIterator($iterator),
+            static fn(iterable $iterator): Iterator => new IterableIterator($iterator),
             $iterators
         );
 
@@ -94,7 +98,7 @@ class ZipIteratorIterator implements \Iterator
      */
     public function current(): array
     {
-        return array_map(static fn (\Iterator $iterator) => $iterator->current(), $this->iterators);
+        return array_map(static fn(Iterator $iterator): mixed => $iterator->current(), $this->iterators);
     }
 
     /**
@@ -109,12 +113,15 @@ class ZipIteratorIterator implements \Iterator
 
     /**
      * Moves to the next set of values in each iterator.
+     *
+     * @return void
      */
     public function next(): void
     {
         foreach ($this->iterators as $iterator) {
             $iterator->next();
         }
+
         ++$this->currentIndex;
     }
 
@@ -128,7 +135,7 @@ class ZipIteratorIterator implements \Iterator
     public function valid(): bool
     {
         foreach ($this->iterators as $iterator) {
-            if (!$iterator->valid()) {
+            if (! $iterator->valid()) {
                 return false;
             }
         }
@@ -138,6 +145,8 @@ class ZipIteratorIterator implements \Iterator
 
     /**
      * Resets the iterator to the beginning.
+     *
+     * @return void
      */
     public function rewind(): void
     {

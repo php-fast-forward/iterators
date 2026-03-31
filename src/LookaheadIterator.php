@@ -8,12 +8,19 @@ declare(strict_types=1);
  * This source file is subject to the license that is bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/iterators
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/iterators
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 namespace FastForward\Iterator;
+
+use InvalidArgumentException;
+use LimitIterator;
+use OutOfBoundsException;
 
 /**
  * Class LookaheadIterator.
@@ -44,11 +51,9 @@ namespace FastForward\Iterator;
  * // Current: 'D' | Next: null | Prev: 'C'
  * ```
  *
- * @package FastForward\Iterator
- *
  * @since 1.1.0
  */
-class LookaheadIterator extends \IteratorIterator
+class LookaheadIterator extends CountableIteratorIterator
 {
     /**
      * @var int the current iterator position
@@ -56,11 +61,11 @@ class LookaheadIterator extends \IteratorIterator
     private int $position = 0;
 
     /**
-     * @var \Iterator A separate instance of the iterator used for peeking.
+     * @var LimitIterator A separate instance of the iterator used for peeking.
      *
-     * This iterator ensures that calling `peek()` does not affect the main iterator's position.
+     * This iterator ensures that calling `lookAhead()` and `lookBehind()` does not affect the main iterator's position.
      */
-    private \Iterator $peekableInnerIterator;
+    private readonly LimitIterator $peekableInnerIterator;
 
     /**
      * Initializes the LookaheadIterator.
@@ -70,7 +75,7 @@ class LookaheadIterator extends \IteratorIterator
     public function __construct(iterable $iterator)
     {
         parent::__construct(new IterableIterator($iterator));
-        $this->peekableInnerIterator = new \IteratorIterator(parent::getInnerIterator());
+        $this->peekableInnerIterator = new LimitIterator(self::getInnerIterator());
     }
 
     /**
@@ -82,22 +87,25 @@ class LookaheadIterator extends \IteratorIterator
      *
      * @return mixed the next value, an array of upcoming values, or `null` if no further elements exist
      *
-     * @throws \InvalidArgumentException if `$count` is less than 1
+     * @throws InvalidArgumentException if `$count` is less than 1
      */
     public function lookAhead(int $count = 1): mixed
     {
         if ($count < 1) {
-            throw new \InvalidArgumentException('Peek count must be at least 1.');
+            throw new InvalidArgumentException('Peek count must be at least 1.');
         }
 
         try {
-            $peekIterator = new \LimitIterator($this->peekableInnerIterator, $this->position + 1, $count);
+            $peekIterator = new LimitIterator($this->peekableInnerIterator, $this->position + 1, $count);
             $result       = iterator_to_array($peekIterator, false);
-        } catch (\OutOfBoundsException) {
+
+            // Reset the peek iterator to avoid side effects
+            $this->peekableInnerIterator->seek($this->position);
+        } catch (OutOfBoundsException) {
             return null;
         }
 
-        return 1 === $count ? ($result[0] ?? null) : $result;
+        return 1 === $count || [] === $result ? ($result[0] ?? null) : $result;
     }
 
     /**
@@ -109,26 +117,32 @@ class LookaheadIterator extends \IteratorIterator
      *
      * @return mixed the previous value, an array of previous values, or `null` if no previous elements exist
      *
-     * @throws \InvalidArgumentException if `$count` is less than 1
+     * @throws InvalidArgumentException if `$count` is less than 1
      */
     public function lookBehind(int $count = 1): mixed
     {
         if ($count < 1) {
-            throw new \InvalidArgumentException('Prev count must be at least 1.');
+            throw new InvalidArgumentException('Prev count must be at least 1.');
         }
 
-        if ($this->position - $count < 0) {
-            return 1 === $count ? null : [];
+        // Ensure we don't try to look back more than we've seen.
+        $lookBehind = min($count, $this->position);
+
+        if ($this->position - $lookBehind < 0) {
+            return null;
         }
 
         try {
-            $prevIterator = new \LimitIterator(
-                $this->getInnerIterator(),
-                max(0, $this->position - $count),
-                $count,
-            );
-            $result = iterator_to_array($prevIterator, false);
-        } catch (\OutOfBoundsException) {
+            // Get from the caching iterator, which maintains a history of seen elements.
+            $prevIterator = new LimitIterator($this->peekableInnerIterator, max(
+                0,
+                $this->position - $count
+            ), $lookBehind);
+            $result       = iterator_to_array($prevIterator, false);
+
+            // Reset the peek iterator to avoid side effects
+            $this->peekableInnerIterator->seek($this->position);
+        } catch (OutOfBoundsException) {
             return null;
         }
 
@@ -139,6 +153,8 @@ class LookaheadIterator extends \IteratorIterator
      * Advances the iterator and updates the internal position counter.
      *
      * This method increments the internal position tracker and moves the iterator forward.
+     *
+     * @return void
      */
     public function next(): void
     {
@@ -151,11 +167,12 @@ class LookaheadIterator extends \IteratorIterator
      *
      * This method rewinds both the main iterator and the peeking iterator,
      * ensuring that both are in sync when restarting the iteration.
+     *
+     * @return void
      */
     public function rewind(): void
     {
         parent::rewind();
-        $this->peekableInnerIterator = clone parent::getInnerIterator();
-        $this->position              = 0;
+        $this->position = 0;
     }
 }

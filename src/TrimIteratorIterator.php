@@ -8,9 +8,12 @@ declare(strict_types=1);
  * This source file is subject to the license that is bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/iterators
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/iterators
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 namespace FastForward\Iterator;
@@ -54,8 +57,6 @@ namespace FastForward\Iterator;
  * **Note:** If `$characters` is `null`, the default trim characters
  * (`" \n\r\t\v\x00"`) will be used.
  *
- * @package FastForward\Iterator
- *
  * @since 1.0.0
  */
 class TrimIteratorIterator extends ClosureIteratorIterator
@@ -63,20 +64,20 @@ class TrimIteratorIterator extends ClosureIteratorIterator
     /**
      * @var string the default characters to trim
      */
-    private const DEFAULT_CHARACTERS = " \n\r\t\v\x00";
+    private const string DEFAULT_CHARACTERS = " \n\r\t\v\x00";
 
     /**
      * Initializes the TrimIteratorIterator.
      *
-     * @param iterable    $iterator   the iterator containing values to be trimmed
-     * @param null|string $characters A string defining the characters to be trimmed.
+     * @param iterable $iterator the iterator containing values to be trimmed
+     * @param string|null $characters A string defining the characters to be trimmed.
      *                                Defaults to standard whitespace characters.
      */
     public function __construct(iterable $iterator, ?string $characters = self::DEFAULT_CHARACTERS)
     {
         parent::__construct(
             new IterableIterator($iterator),
-            static fn ($current) => mb_trim($current, $characters ?? self::DEFAULT_CHARACTERS)
+            static fn($current): string => mb_trim($current, $characters ?? self::DEFAULT_CHARACTERS)
         );
     }
 }

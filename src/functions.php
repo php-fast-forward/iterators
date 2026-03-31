@@ -8,12 +8,17 @@ declare(strict_types=1);
  * This source file is subject to the license that is bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/iterators
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/iterators
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 namespace FastForward\Iterator;
+
+use Stringable;
 
 /**
  * Prints a debug representation of an iterable object.
@@ -37,30 +42,49 @@ namespace FastForward\Iterator;
  * **Output:**
  * ```
  * === Example Output ===
- *  - Key: "a"
- *    Value: "1"
- *  - Key: "b"
- *    Value: "2"
- *  - Key: "c"
- *    Value: "3"
+ *
+ * Length: 3
+ * Output: [
+ *   "a" => 1,
+ *   "b" => 2,
+ *   0 => 3,
+ * ]
  * ```
  *
- * @param \Traversable $iteratable the iterable object to debug
- * @param null|string  $section    an optional title for the output section
+ * @param iterable $iterable the iterable object to debug
+ * @param string|null $section an optional title for the output section
  */
-function debugIterable(\Traversable $iteratable, ?string $section = null): void
+function debugIterable(iterable $iterable, ?string $section = null): void
 {
-    if (!$section) {
-        $section = $iteratable::class;
+    if (! $section) {
+        $section = $iterable::class;
     }
 
-    printf('=== %s ===%s', $section, PHP_EOL);
+    printf(
+        '=== %s ===%s%sLength: %d%sOutput: [%s',
+        $section,
+        \PHP_EOL,
+        \PHP_EOL,
+        \count($iterable),
+        \PHP_EOL,
+        \PHP_EOL
+    );
 
-    foreach ($iteratable as $key => $value) {
-        if (!\is_scalar($value)) {
-            $value = json_encode($value);
+    foreach ($iterable as $key => $value) {
+        if (\is_string($key)) {
+            $key = \sprintf('"%s"', $key);
         }
 
-        printf(' - Key: "%s" %s   Value: "%s" %s', $key, PHP_EOL, $value, PHP_EOL);
+        if (\is_string($value) || $value instanceof Stringable) {
+            $value = \sprintf('"%s"', $value);
+        }
+
+        if (! \is_scalar($value)) {
+            $value = json_encode($value, \JSON_PRETTY_PRINT | \JSON_UNESCAPED_SLASHES | \JSON_UNESCAPED_UNICODE);
+        }
+
+        printf('%s%s => %s,%s', '  ', $key, $value, \PHP_EOL);
     }
+
+    printf(']%s', \PHP_EOL);
 }

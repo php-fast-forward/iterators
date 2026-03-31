@@ -8,12 +8,19 @@ declare(strict_types=1);
  * This source file is subject to the license that is bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/iterators
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/iterators
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 namespace FastForward\Iterator;
+
+use CachingIterator;
+use Generator;
+use Traversable;
 
 /**
  * Class GeneratorCachingIteratorAggregate.
@@ -67,31 +74,29 @@ namespace FastForward\Iterator;
  * **Note:** If a callable is provided, it is automatically converted to a generator
  * using `ClosureFactoryIteratorAggregate`.
  *
- * @package FastForward\Iterator
- *
  * @since 1.0.0
  */
-class GeneratorCachingIteratorAggregate implements \IteratorAggregate
+class GeneratorCachingIteratorAggregate extends CountableIteratorAggregate
 {
     /**
-     * @var \CachingIterator the caching iterator that stores generated values
+     * @var CachingIterator the caching iterator that stores generated values
      */
-    private \CachingIterator $cachingIterator;
+    private readonly CachingIterator $cachingIterator;
 
     /**
      * Initializes the caching iterator with a generator or a callable returning a generator.
      *
      * If a callable is provided, it is wrapped in a `ClosureFactoryIteratorAggregate` to generate the iterator.
      *
-     * @param callable|\Generator $generator the generator or a callable returning a generator
+     * @param callable|Generator $generator the generator or a callable returning a generator
      */
-    public function __construct(callable|\Generator $generator)
+    public function __construct(callable|Generator $generator)
     {
         if (\is_callable($generator)) {
             $generator = (new ClosureFactoryIteratorAggregate($generator))->getIterator();
         }
 
-        $this->cachingIterator = new \CachingIterator($generator, \CachingIterator::FULL_CACHE);
+        $this->cachingIterator = new CachingIterator($generator, CachingIterator::FULL_CACHE);
     }
 
     /**
@@ -100,9 +105,9 @@ class GeneratorCachingIteratorAggregate implements \IteratorAggregate
      * This method ensures that once a generator is iterated, its values
      * remain available for subsequent iterations.
      *
-     * @return \Traversable the cached or fresh iterator
+     * @return Traversable the cached or fresh iterator
      */
-    public function getIterator(): \Traversable
+    public function getIterator(): Traversable
     {
         if ($this->cachingIterator->getCache()) {
             yield from $this->cachingIterator->getCache();
