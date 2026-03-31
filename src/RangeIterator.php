@@ -16,6 +16,12 @@ declare(strict_types=1);
  * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
+namespace FastForward\Iterator;
+
+use Iterator;
+use Countable;
+use InvalidArgumentException;
+
 /**
  * An iterator that behaves like PHP's `range()` function.
  * It supports both ascending and descending sequences and allows iteration
@@ -77,13 +83,6 @@ declare(strict_types=1);
  *
  * @since 1.0.0
  */
-
-namespace FastForward\Iterator;
-
-use Iterator;
-use Countable;
-use InvalidArgumentException;
-
 class RangeIterator implements Iterator, Countable
 {
     /**
