@@ -1,13 +1,15 @@
 Advanced Topics
 ===============
 
-This section covers advanced usage, customization, and extension points for Fast Forward Iterators.
+This section is for users who want to compare similar iterators, build their own
+extensions, or reason about lazy evaluation, caching, and debugging strategies.
 
 .. toctree::
-    :maxdepth: 1
+   :maxdepth: 1
 
-    combining-iterators
-    functional-patterns
-    caching-rewinding
-    debugging
-    examples
+   combining-iterators
+   functional-patterns
+   caching-rewinding
+   debugging
+   extending
+   examples

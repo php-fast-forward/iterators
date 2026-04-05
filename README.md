@@ -22,7 +22,7 @@ Enhance your PHP applications with high-performance iterators: lookahead, peekin
 Install via Composer:
 
 ```bash
-composer require php-fast-forward/iterators
+composer require fast-forward/iterators
 ```
 
 **Requirements:** PHP 8.3 or higher

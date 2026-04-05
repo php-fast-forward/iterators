@@ -1,7 +1,9 @@
 Usage
 =====
 
-This section covers common usage patterns and real-world scenarios for Fast Forward Iterators.
+This section focuses on day-to-day decision making: which iterator to reach for,
+what kind of output it produces, and which behavior tends to surprise new
+users.
 
 .. toctree::
    :maxdepth: 1

@@ -1,27 +1,53 @@
 Functional Patterns
 ==================
 
-Leverage closures for custom logic during iteration:
+Closures are a big part of what makes this library expressive. They let you keep
+iteration lazy while still injecting project-specific logic.
 
-- ``ClosureIteratorIterator``: Wraps an iterator with a closure for filtering, mapping, or other logic.
-- ``ClosureFactoryIteratorAggregate``: Factory for creating iterators from closures.
+Two core closure-based tools
+----------------------------
 
-Example:
+.. list-table:: Closure-oriented building blocks
+   :header-rows: 1
+   :widths: 30 70
+
+   * - Class
+     - Use it when...
+   * - ``ClosureIteratorIterator``
+     - you already have a source and want to transform each visible value
+   * - ``ClosureFactoryIteratorAggregate``
+     - you want each traversal to create a fresh iterable source lazily
+
+Transform values lazily
+-----------------------
 
 .. code-block:: php
 
-   $it = new ArrayIterator([1,2,3]);
-   $closure = new ClosureIteratorIterator($it, function ($value) {
+   use FastForward\Iterator\ClosureIteratorIterator;
+
+   $it = new ArrayIterator([1, 2, 3]);
+   $closure = new ClosureIteratorIterator($it, function (int $value): int {
        return $value * 2;
    });
+
    foreach ($closure as $val) {
-       echo $val . "\n";
+       echo $val . PHP_EOL;
    }
 
-**Expected output:**
+Expected output:
 
 .. code-block:: text
 
    2
    4
    6
+
+Important details
+-----------------
+
+- ``ClosureIteratorIterator`` passes both the current value and the current key
+  to your closure.
+- exceptions thrown inside the closure bubble up naturally, which is often what
+  you want in validation-heavy pipelines.
+- ``TrimIteratorIterator`` is an example of a higher-level iterator built on top
+  of ``ClosureIteratorIterator``.
