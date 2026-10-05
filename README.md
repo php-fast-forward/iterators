@@ -1,7 +1,7 @@
 # FastForward\Iterators
 
 <p align="center">
-  <img src="docs/_static/mascot-banner.png" alt="Dash inspecting, filtering and grouping a stream of values" width="840">
+  <img src="https://raw.githubusercontent.com/php-fast-forward/iterators/2607002b983b24d59b048b1f32f6df1550db42d5/docs/_static/mascot-banner.png" alt="Dash inspecting, filtering and grouping a stream of values" width="840">
 </p>
 
 [![PHP Version](https://img.shields.io/badge/php-^8.3-777BB4?logo=php&logoColor=white)](https://www.php.net/releases/)
