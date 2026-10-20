@@ -5,9 +5,9 @@ Use [Fast Forward Changelog v0.3.0](https://github.com/php-fast-forward/changelo
 through CPX with PHP 8.5 or newer; the package's PHP requirements stay unchanged.
 
 ```sh
-cpx --skip-local fast-forward/changelog:0.3.0 help add
-cpx --skip-local fast-forward/changelog:0.3.0 add "Describe the change." --category=fixed --no-interaction
-cpx --skip-local fast-forward/changelog:0.3.0 check --no-interaction
+cpx --skip-local fast-forward/changelog help add
+cpx --skip-local fast-forward/changelog add "Describe the change." --category=fixed --no-interaction
+cpx --skip-local fast-forward/changelog check --no-interaction
 ```
 
 Choose the category and semantic impact that describe the change. Commit the
@@ -17,7 +17,7 @@ with `check --since=origin/main --source=tags --no-interaction` using the same C
 
 [The installed project skill](.agents/skills/fast-forward-changelog/SKILL.md)
 explains the contribution and release lifecycle. Check its integrity with
-`cpx --skip-local fast-forward/changelog:0.3.0 skill:install --check --json`.
+`cpx --skip-local fast-forward/changelog skill:install --check --json`.
 The skill is a local instruction payload, independent of a Composer dependency.
 
 The GitHub workflow checks fragments, maintains PR feedback and prepares a
