@@ -1,7 +1,7 @@
 # Contributing
 
 Add one independent `.changelog/*.md` fragment for each observable change.
-Use [Fast Forward Changelog v0.3.0](https://github.com/php-fast-forward/changelog/tree/v0.3.0)
+Use [Fast Forward Changelog](https://github.com/php-fast-forward/changelog)
 through CPX with PHP 8.5 or newer; the package's PHP requirements stay unchanged.
 
 ```sh
@@ -26,10 +26,10 @@ version, history and fragment deletions before merging it. It never merges itsel
 its approved merge publishes the version tag and GitHub Release. Installing the
 workflow or merging an ordinary contribution does not publish a release.
 
-This repository has published GitHub Releases and no central changelog yet.
-The workflow uses `source: github` so the first version PR imports the existing
-release notes and publication dates instead of replacing them with missing-note
-messages. Existing release text remains intact; a release with no notes gets an
+`CHANGELOG.md` includes all three published stable versions, backfilled from
+GitHub Releases with their original notes and publication dates. The workflow
+uses `source: github` to retain that evidence during future consolidation.
+Existing release text remains intact; a release with no notes gets an
 explicit missing-notes message. New sections use Keep a Changelog headings and
 version links. Fragment PR references are resolved automatically during
 consolidation when their merged origin can be verified; do not invent references
