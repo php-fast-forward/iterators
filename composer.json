@@ -28,6 +28,9 @@
     "require-dev": {
         "fast-forward/dev-tools": "dev-main"
     },
+    "suggest": {
+        "llm/skills": "Optionally synchronize the bundled consumer skill in your project."
+    },
     "minimum-stability": "stable",
     "autoload": {
         "psr-4": {
@@ -56,6 +59,9 @@
         },
         "grumphp": {
             "config-default-path": "vendor/fast-forward/dev-tools/grumphp.yml"
+        },
+        "skills": {
+            "source": "resources/skills"
         }
     },
     "scripts": {
