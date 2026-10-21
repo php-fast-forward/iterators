@@ -61,7 +61,11 @@ The Composer package is plural `fast-forward/iterators`, while the namespace is 
 
 ChunkedIteratorAggregate emits value arrays, discards input keys, emits a partial last chunk, and normalizes sizes below one to one. Empty input emits no chunk. Validate an application chunk-size setting first when silently normalizing zero would hide a configuration error.
 
-LookaheadIterator::lookAhead() and lookBehind() are the public method names, not peek()/prev(). Counts below one throw InvalidArgumentException; looking beyond the available range can return null. The wrapper needs seek/rewind behavior internally; do not promise safe arbitrary rewinding of one-shot generators. For repeated iteration use a reusable array or an explicit ClosureFactoryIteratorAggregate that creates a fresh generator. Counting a traversal can consume it; test repeated traversal against the actual source. Chunked results are incremental, but caching/unique/grouping and lookahead wrappers can retain data. Choose a wrapper from the installed source/API rather than inventing a fluent map/filter DSL.
+LookaheadIterator::lookAhead() and lookBehind() are the public method names, not peek()/prev(). Counts below one throw InvalidArgumentException; looking beyond the available range can return null. The wrapper needs seek/rewind behavior internally. Use a reusable array as its input. For a bounded generator, materialize its values into an array before constructing the lookahead wrapper; do not materialize an unbounded stream.
+
+ClosureFactoryIteratorAggregate can create a fresh generator for each independent traversal of the aggregate. It does not make a generator-backed input rewindable inside LookaheadIterator: the inner IterableIterator resolves one generator, and lookahead's internal rewinds do not invoke the factory again. Do not use a generator or a generator-backed factory aggregate as a rewind-safe lookahead input. The complete example checks independent factory traversals separately from repeated lookahead over an array.
+
+Counting a traversal can consume it; test repeated traversal against the actual source. Chunked results are incremental, but caching/unique/grouping and lookahead wrappers can retain data. Choose a wrapper from the installed source/API rather than inventing a fluent map/filter DSL.
 
 ## Verify integration
 
