@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Automate changelog checks, version pull requests and approved releases with Fast Forward Changelog, preserving existing GitHub release notes when creating the central history and making the project skill available to contributors. ([#7](https://github.com/php-fast-forward/iterators/pull/7))
+- GitHub Actions(deps): bump php-fast-forward/dev-tools/.github/workflows/wiki-direct.yml from c637e7f9d8ae6059b8655996e56f6d17f874792c to 65ba0c50cf261ff4ab56ac4fbe6e373e52e2c9dc
+
+  Update dependencies: `php-fast-forward/dev-tools/.github/workflows/wiki-direct.yml`.
+
+  ([#6](https://github.com/php-fast-forward/iterators/pull/6), @dependabot[bot])
 - Restore the Changelog skill from its GitHub source during Composer installation instead of committing a generated copy and separate installation receipt. ([#7](https://github.com/php-fast-forward/iterators/pull/7))
 
 ## [1.2.0] - 2026-03-31
