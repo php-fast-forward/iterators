@@ -111,3 +111,12 @@ Contributions, bug reports and suggestions are welcome! Please open an issue or 
 ## 📄 License
 
 This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
+
+## Consumer agent skill
+
+The package includes [fast-forward-iterators](resources/skills/fast-forward-iterators/SKILL.md) for application integration.
+It supports `fast-forward/iterators:^1.3`; inspect the installed version.
+See [skill installation and lifecycle](resources/skills/fast-forward-iterators/references/installation.md) for
+optional project synchronization with `llm/skills ^1.15`, guarded manual
+project/global copies and a pinned Skills CLI alternative. Shipping files does
+not install tooling or activate the skill in an agent session.
