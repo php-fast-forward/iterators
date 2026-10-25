@@ -20,7 +20,7 @@ use FastForward\Iterator\FileExtensionFilterIterator;
 
 use function FastForward\Iterator\debugIterable;
 
-require_once dirname(__DIR__) . '/vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 $directoryPath = __DIR__; // Change this to the directory you want to scan
 

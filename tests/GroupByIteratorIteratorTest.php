@@ -47,7 +47,7 @@ final class GroupByIteratorIteratorTest extends TestCase
                 'age' => 25,
             ],
         ];
-        $it = new GroupByIteratorIterator($data, fn($item) => $item['age']);
+        $it = new GroupByIteratorIterator($data, static fn($item) => $item['age']);
         $result = iterator_to_array($it);
         self::assertArrayHasKey(25, $result);
         self::assertArrayHasKey(30, $result);
@@ -64,7 +64,7 @@ final class GroupByIteratorIteratorTest extends TestCase
     #[Test]
     public function groupByWithEmptyArrayWillReturnEmpty(): void
     {
-        $it = new GroupByIteratorIterator([], fn($item) => $item);
+        $it = new GroupByIteratorIterator([], static fn($item) => $item);
         $result = iterator_to_array($it);
         self::assertSame([], $result);
     }
@@ -89,7 +89,7 @@ final class GroupByIteratorIteratorTest extends TestCase
                 'name' => 'Banana',
             ],
         ];
-        $it = new GroupByIteratorIterator($data, fn($item) => $item['type']);
+        $it = new GroupByIteratorIterator($data, static fn($item) => $item['type']);
         $result = iterator_to_array($it);
         self::assertArrayHasKey('fruit', $result);
         self::assertArrayHasKey('vegetable', $result);

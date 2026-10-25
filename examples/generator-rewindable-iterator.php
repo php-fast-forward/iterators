@@ -21,7 +21,7 @@ use FastForward\Iterator\RepeatableIteratorIterator;
 
 use function FastForward\Iterator\debugIterable;
 
-require_once dirname(__DIR__) . '/vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 /**
  * The number of elements to generate.

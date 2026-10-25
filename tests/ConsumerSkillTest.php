@@ -28,7 +28,7 @@ final class ConsumerSkillTest extends TestCase
      */
     public function testBundledConsumerIntegration(): void
     {
-        $root = \dirname(__DIR__);
+        $root = dirname(__DIR__);
         $process = new Process([
             \PHP_BINARY,
             $root . '/resources/skills/fast-forward-iterators/examples/integration.php',

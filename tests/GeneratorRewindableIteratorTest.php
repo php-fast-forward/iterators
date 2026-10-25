@@ -36,7 +36,7 @@ final class GeneratorRewindableIteratorTest extends TestCase
     #[Test]
     public function rewindWithGeneratorWillAllowMultipleIterations(): void
     {
-        $gen = function () {
+        $gen = static function () {
             yield 'A';
             yield 'B';
             yield 'C';
@@ -54,7 +54,7 @@ final class GeneratorRewindableIteratorTest extends TestCase
     #[Test]
     public function rewindWithClosureReturningGeneratorWillAllowMultipleIterations(): void
     {
-        $it = new GeneratorRewindableIterator(fn(): Generator => (function () {
+        $it = new GeneratorRewindableIterator(static fn(): Generator => (static function () {
             yield 1;
             yield 2;
             yield 3;
@@ -71,7 +71,7 @@ final class GeneratorRewindableIteratorTest extends TestCase
     #[Test]
     public function validWithEmptyGeneratorWillReturnFalse(): void
     {
-        $it = new GeneratorRewindableIterator(fn(): Generator => (function () {
+        $it = new GeneratorRewindableIterator(static fn(): Generator => (static function () {
             if (false) {
                 yield;
             }
@@ -86,7 +86,7 @@ final class GeneratorRewindableIteratorTest extends TestCase
     #[Test]
     public function keyAndCurrentWillReturnExpectedValues(): void
     {
-        $it = new GeneratorRewindableIterator(fn(): Generator => (function () {
+        $it = new GeneratorRewindableIterator(static fn(): Generator => (static function () {
             yield 'x' => 10;
             yield 'y' => 20;
         })());
