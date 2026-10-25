@@ -33,7 +33,7 @@ final class ConsecutiveGroupIteratorTest extends TestCase
     public function rewindWithConsecutiveEqualElementsWillGroupCorrectly(): void
     {
         $data = [1, 1, 2, 2, 2, 3, 4, 4, 5];
-        $iterator = new ConsecutiveGroupIterator($data, fn($prev, $curr): bool => $prev === $curr);
+        $iterator = new ConsecutiveGroupIterator($data, static fn($prev, $curr): bool => $prev === $curr);
         $result = iterator_to_array($iterator);
         self::assertSame([[1, 1], [2, 2, 2], [3], [4, 4], [5]], array_values($result));
     }
@@ -45,7 +45,7 @@ final class ConsecutiveGroupIteratorTest extends TestCase
     public function rewindWithAllDifferentElementsWillGroupEachIndividually(): void
     {
         $data = [1, 2, 3];
-        $iterator = new ConsecutiveGroupIterator($data, fn($prev, $curr): false => false);
+        $iterator = new ConsecutiveGroupIterator($data, static fn($prev, $curr): false => false);
         $result = iterator_to_array($iterator);
         self::assertSame([[1], [2], [3]], array_values($result));
     }
@@ -57,7 +57,7 @@ final class ConsecutiveGroupIteratorTest extends TestCase
     public function rewindWithAllEqualElementsWillGroupAllTogether(): void
     {
         $data = [7, 7, 7];
-        $iterator = new ConsecutiveGroupIterator($data, fn($prev, $curr): true => true);
+        $iterator = new ConsecutiveGroupIterator($data, static fn($prev, $curr): true => true);
         $result = iterator_to_array($iterator);
         self::assertSame([[7, 7, 7]], array_values($result));
     }
@@ -68,7 +68,7 @@ final class ConsecutiveGroupIteratorTest extends TestCase
     #[Test]
     public function validWithEmptyInputWillReturnFalse(): void
     {
-        $iterator = new ConsecutiveGroupIterator([], fn(): true => true);
+        $iterator = new ConsecutiveGroupIterator([], static fn(): true => true);
         $iterator->rewind();
         self::assertFalse($iterator->valid());
     }
@@ -79,7 +79,7 @@ final class ConsecutiveGroupIteratorTest extends TestCase
     #[Test]
     public function currentWithNoValidChunkWillReturnEmptyArray(): void
     {
-        $iterator = new ConsecutiveGroupIterator([], fn(): true => true);
+        $iterator = new ConsecutiveGroupIterator([], static fn(): true => true);
         $iterator->rewind();
         self::assertSame([], $iterator->current());
     }

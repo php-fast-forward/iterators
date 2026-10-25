@@ -33,7 +33,7 @@ class ClosureIteratorIteratorTest extends TestCase
     public function constructWithArrayAndClosureWillTransformValues(): void
     {
         $input = [1, 2, 3];
-        $closure = fn($value): int|float => $value * 2;
+        $closure = static fn($value): int|float => $value * 2;
         $iterator = new ClosureIteratorIterator($input, $closure);
         $result = iterator_to_array($iterator, false);
         self::assertSame([2, 4, 6], $result);
@@ -46,7 +46,7 @@ class ClosureIteratorIteratorTest extends TestCase
     public function constructWithIteratorAndClosureWillTransformValues(): void
     {
         $input = new ArrayIterator([10, 20, 30]);
-        $closure = fn($value, $key): float|int|array => $value + $key;
+        $closure = static fn($value, $key): float|int|array => $value + $key;
         $iterator = new ClosureIteratorIterator($input, $closure);
         $result = iterator_to_array($iterator, false);
         self::assertSame([10, 21, 32], $result);
@@ -62,7 +62,7 @@ class ClosureIteratorIteratorTest extends TestCase
             'a' => 5,
             'b' => 10,
         ];
-        $closure = fn($value, $key): string => $key . ':' . $value;
+        $closure = static fn($value, $key): string => $key . ':' . $value;
         $iterator = new ClosureIteratorIterator($input, $closure);
         $result = iterator_to_array($iterator, false);
         self::assertSame(['a:5', 'b:10'], $result);
@@ -75,7 +75,7 @@ class ClosureIteratorIteratorTest extends TestCase
     public function emptyInputWillReturnEmpty(): void
     {
         $input = [];
-        $closure = fn($value) => $value;
+        $closure = static fn($value) => $value;
         $iterator = new ClosureIteratorIterator($input, $closure);
         $result = iterator_to_array($iterator, false);
         self::assertSame([], $result);
@@ -91,7 +91,7 @@ class ClosureIteratorIteratorTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $input = [1, 2, 3];
-        $closure = function ($value) {
+        $closure = static function ($value) {
             if (2 === $value) {
                 throw new InvalidArgumentException('Invalid value');
             }

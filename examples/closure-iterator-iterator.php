@@ -20,7 +20,7 @@ use FastForward\Iterator\ClosureIteratorIterator;
 
 use function FastForward\Iterator\debugIterable;
 
-require_once dirname(__DIR__) . '/vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 /**
  * Sample dataset for testing ClosureIteratorIterator..

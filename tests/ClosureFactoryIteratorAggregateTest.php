@@ -32,7 +32,7 @@ final class ClosureFactoryIteratorAggregateTest extends TestCase
     #[Test]
     public function getIteratorWithGeneratorWillIterateAllValues(): void
     {
-        $agg = new ClosureFactoryIteratorAggregate(function () {
+        $agg = new ClosureFactoryIteratorAggregate(static function () {
             yield 1;
             yield 2;
             yield 3;
@@ -47,7 +47,7 @@ final class ClosureFactoryIteratorAggregateTest extends TestCase
     #[Test]
     public function getIteratorWithArrayIteratorWillIterateAllValues(): void
     {
-        $agg = new ClosureFactoryIteratorAggregate(fn(): ArrayIterator => new ArrayIterator([10, 20, 30]));
+        $agg = new ClosureFactoryIteratorAggregate(static fn(): ArrayIterator => new ArrayIterator([10, 20, 30]));
         $result = iterator_to_array($agg);
         self::assertSame([10, 20, 30], array_values($result));
     }
@@ -58,7 +58,7 @@ final class ClosureFactoryIteratorAggregateTest extends TestCase
     #[Test]
     public function getIteratorWithGeneratorReturnStatementWillIgnoreReturn(): void
     {
-        $agg = new ClosureFactoryIteratorAggregate(fn(): Generator => (function () {
+        $agg = new ClosureFactoryIteratorAggregate(static fn(): Generator => (static function () {
             yield 'A';
             yield 'B';
 
@@ -74,7 +74,7 @@ final class ClosureFactoryIteratorAggregateTest extends TestCase
     #[Test]
     public function getIteratorWithEmptyGeneratorWillReturnEmptyArray(): void
     {
-        $agg = new ClosureFactoryIteratorAggregate(fn(): Generator => (function () {
+        $agg = new ClosureFactoryIteratorAggregate(static fn(): Generator => (static function () {
             if (false) {
                 yield;
             }
