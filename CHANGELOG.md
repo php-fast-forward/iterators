@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.4] - 2026-11-25
+
+### Changed
+
+- Group Dependabot dependency updates by ecosystem and dependency type. ([#16](https://github.com/php-fast-forward/iterators/pull/16))
+- Pin the reusable DevTools Wiki workflow to the stable v1.26.0 release so unrelated upstream commits no longer trigger SHA-only dependency updates. ([#19](https://github.com/php-fast-forward/iterators/pull/19))
+
 ## [1.3.3] - 2026-11-11
 
 ### Changed
@@ -67,6 +74,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Release notes are unavailable for this version.
 
+[1.3.4]: https://github.com/php-fast-forward/iterators/compare/v1.3.3...v1.3.4
 [1.3.3]: https://github.com/php-fast-forward/iterators/compare/v1.3.2...v1.3.3
 [1.3.2]: https://github.com/php-fast-forward/iterators/compare/v1.3.1...v1.3.2
 [1.3.1]: https://github.com/php-fast-forward/iterators/compare/v1.3.0...v1.3.1
